@@ -6,48 +6,62 @@ String projectTitle = "Particle Motion";
 
 Fountain fountain;
 float SPLASH_FACTOR = .45; //Global variable for controlling splash behavior
+int SPLASH_COUNT = 3;  //Global for # of splashes allowed. Can drastically effect performance
+int SPAWN_RATE = 2; //Global for # of particles spawned each frame. Can drastically effect performance
 
-//Animation Principle: Separate Physical Update 
 class WaterParticle {
   
-  float radius; //size of drops
-  float oV;
-  float oY;
-  float oX;
-  float positionY;
-  float positionX;
-  float velocity; //initial velocity
-  float acceleration = 9.8; //gravity
-  float theta; //angle of trajectory
-  float velocityY;
-  float velocityX;
-  float time;
-  boolean flipped;
-  boolean splash;
-  float splashCount;
+  //float oX; //initial x coord
+  //float oY; //initial y coord
+  //float oZ; //initial z coord
+  PVector origin; //origin position vector
   
-  WaterParticle() {
-    radius = 10;
-    time = 0;
+  //float positionY; //active y coord
+  //float positionX; //active x coord
+  //float positionZ; //active z coord
+  PVector position; //position vector
+  
+  //float velocityY;
+  //float velocityX;
+  //float velocityZ;
+  PVector velocity; //velocity vector
+  float oV; //initial velocity
+  float magnitude; //magnitude of velocty vector
+  float acceleration = 9.8; //gravity
+  
+  float theta; //angle of trajectory
+  float radius; //size of drops
+  float time; //lifetime of particle TODO: switch to 'real-time'
+  boolean flipped; //direction of particle; false = left
+  boolean splash; //has particle splashed
+  int splashCount; //recursion depth
+  
+  WaterParticle() { //default constructor
+    
+    origin = new  PVector(width/2, height/2, 0);
+    position = new PVector();
+    velocity = new PVector();
     oV = random(20,40); //random velocity
     theta = random(55,80); //random angle
+    radius = 10;
+    time = 0;
     flipped = false;
     randomFlip();
-    oX = width/2;
-    oY = height/2;
     initialVelocity();
     splash = false;
     splashCount = 0;
   }
   
-  WaterParticle(WaterParticle that) {
+  WaterParticle(WaterParticle that) { //recursive constructor
+    
+    origin = new PVector(that.position.x, that.position.y);
+    position = new PVector();
+    velocity = new PVector();
+    oV = that.magnitude * SPLASH_FACTOR;
+    theta = that.theta;
     radius = that.radius * .75;
     time = 0;
-    oV = that.velocity * SPLASH_FACTOR;
-    theta = that.theta;
     flipped = that.flipped;
-    oX = that.positionX;
-    oY = that.positionY;
     initialVelocity();
     splash = false;
     splashCount = that.splashCount + 1;
@@ -64,28 +78,28 @@ class WaterParticle {
   }
   
   void initialVelocity() {
-    velocity = oV;
-    velocityX = oV * cos(radians(theta));
-    velocityY = oV * sin(radians(theta));
+    velocity.x = oV * cos(radians(theta));
+    velocity.y = oV * sin(radians(theta));
+    magnitude = velocity.mag();
   }
   
   void updateVelocity() {
-    velocity = sqrt(pow(velocityX,2) + pow(velocityY,2));
-    velocityY = oV * sin(radians(theta)) - (acceleration * time);
+    velocity.y = oV * sin(radians(theta)) - (acceleration * time);
+    magnitude = velocity.mag();
   }
   
   void updatePosition() {
     if (flipped) {
-      positionX = oX + (oV * time * cos(radians(theta)));
+      position.x = origin.x + (oV * time * cos(radians(theta)));
     } else {
-      positionX = oX - (oV * time * cos(radians(theta)));
+      position.x = origin.x - (oV * time * cos(radians(theta)));
     }
-    positionY = oY - (oV * time * sin(radians(theta)) - (acceleration/2 * time * time));
+    position.y = origin.y - (oV * time * sin(radians(theta)) - (acceleration/2 * time * time));
   }
   
   void render() {
     fill(0,0,255);
-    ellipse(positionX, positionY, radius, radius);
+    ellipse(position.x, position.y, radius, radius);
   }
   
   void update() {
@@ -93,8 +107,8 @@ class WaterParticle {
     updatePosition();
     updateVelocity();
     
-    if (positionY + radius > 600){
-      positionY = 600 - radius;
+    if (position.y + radius > 600){
+      position.y = 600 - radius;
       splash = true;
     }
   }
@@ -106,12 +120,12 @@ class WaterParticle {
   
   void print() {
     println("time: " + time +
-            " | oX: " + oX +
-            " | oY: " + oY +
-            " | posX: " + positionX +
-            " | posY: " + positionY +
-            " | vel: " + velocity +
-            " | velY: " + velocityY +
+            " | oX: " + origin.x +
+            " | oY: " + origin.y +
+            " | posX: " + position.x +
+            " | posY: " + position.y +
+            " | mag: " + magnitude +
+            " | velY: " + velocity.y +
             " | theta: " + theta +
             " | radius: " + radius +
             " | flipped: " + flipped);
@@ -127,8 +141,9 @@ class Fountain {
    }
  
    void spawnParticle() {
-     particles.add(new WaterParticle());
-     particles.add(new WaterParticle());
+     for (int i = 0; i < SPAWN_RATE; i++) {
+       particles.add(new WaterParticle());
+     }
   }
 
   void run() {
@@ -139,7 +154,7 @@ class Fountain {
         particles.remove(i);
         wp.print();
         
-        if (wp.splashCount <= 2) {   
+        if (wp.splashCount <= SPLASH_COUNT) {   
           particles.add(new WaterParticle(wp));
           wp.flip();
           particles.add(new WaterParticle(wp));
