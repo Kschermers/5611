@@ -5,31 +5,28 @@
 String projectTitle = "Particle Motion";
 
 Fountain fountain;
+float TIME_STEP = .1; //Global for adjusting speed of simulation
 float SPLASH_FACTOR = .45; //Global variable for controlling splash behavior
-int SPLASH_COUNT = 3;  //Global for # of splashes allowed. Can drastically effect performance
-int SPAWN_RATE = 2; //Global for # of particles spawned each frame. Can drastically effect performance
+int SPLASH_COUNT = 1;  //Global for # of splashes allowed. Can drastically effect performance
+int SPAWN_RATE = 1; //Global for # of particles spawned each frame. Can drastically effect performance
+float eyeX;
+float eyeY;
+float eyeZ;
+float camAngle = 0;
+int d = 600;
+int depth = -400;
 
 class WaterParticle {
   
-  //float oX; //initial x coord
-  //float oY; //initial y coord
-  //float oZ; //initial z coord
   PVector origin; //origin position vector
-  
-  //float positionY; //active y coord
-  //float positionX; //active x coord
-  //float positionZ; //active z coord
   PVector position; //position vector
-  
-  //float velocityY;
-  //float velocityX;
-  //float velocityZ;
   PVector velocity; //velocity vector
   float oV; //initial velocity
   float magnitude; //magnitude of velocty vector
   float acceleration = 9.8; //gravity
   
-  float theta; //angle of trajectory
+  float thetaX; //angle of trajectory
+  float thetaZ; //polar angle
   float radius; //size of drops
   float time; //lifetime of particle TODO: switch to 'real-time'
   boolean flipped; //direction of particle; false = left
@@ -38,31 +35,34 @@ class WaterParticle {
   
   WaterParticle() { //default constructor
     
-    origin = new  PVector(width/2, height/2, 0);
+    origin = new  PVector(width/2, height/2, depth/2);
     position = new PVector();
     velocity = new PVector();
-    oV = random(20,40); //random velocity
-    theta = random(55,80); //random angle
+    oV = random(40,60); //random velocity
+    initialVelocity();
+    thetaX = random(55,80); //random launch angle
+    thetaZ = random(0,180);
     radius = 10;
     time = 0;
     flipped = false;
     randomFlip();
-    initialVelocity();
+    
     splash = false;
     splashCount = 0;
   }
   
   WaterParticle(WaterParticle that) { //recursive constructor
     
-    origin = new PVector(that.position.x, that.position.y);
+    origin = new PVector(that.position.x, that.position.y, that.position.z);
     position = new PVector();
     velocity = new PVector();
     oV = that.magnitude * SPLASH_FACTOR;
-    theta = that.theta;
+    initialVelocity();
+    thetaX = that.thetaX;
+    thetaZ = that.thetaZ;
     radius = that.radius * .75;
     time = 0;
     flipped = that.flipped;
-    initialVelocity();
     splash = false;
     splashCount = that.splashCount + 1;
   }
@@ -78,32 +78,37 @@ class WaterParticle {
   }
   
   void initialVelocity() {
-    velocity.x = oV * cos(radians(theta));
-    velocity.y = oV * sin(radians(theta));
+    velocity.x = oV * cos(radians(thetaX)) * cos(radians(thetaZ));
+    velocity.y = oV * sin(radians(thetaX));
+    velocity.z = oV * cos(radians(thetaX)) * sin(radians(thetaZ));
     magnitude = velocity.mag();
   }
   
   void updateVelocity() {
-    velocity.y = oV * sin(radians(theta)) - (acceleration * time);
+    velocity.y = oV * sin(radians(thetaX)) - (acceleration * time);
     magnitude = velocity.mag();
   }
   
   void updatePosition() {
     if (flipped) {
-      position.x = origin.x + (oV * time * cos(radians(theta)));
+      position.x = origin.x + (oV * time * cos(radians(thetaX)));// * cos(radians(thetaZ)));
     } else {
-      position.x = origin.x - (oV * time * cos(radians(theta)));
+      position.x = origin.x - (oV * time * cos(radians(thetaX)));// * cos(radians(thetaZ)));
     }
-    position.y = origin.y - (oV * time * sin(radians(theta)) - (acceleration/2 * time * time));
+    position.y = origin.y - (oV * time * sin(radians(thetaX)) - (acceleration/2 * time * time));
+    position.z = origin.z - (oV * time * cos(radians(thetaX)) * sin(radians(thetaZ)));
   }
   
   void render() {
     fill(0,0,255);
-    ellipse(position.x, position.y, radius, radius);
+    pushMatrix();
+    translate(position.x,position.y,position.z);
+    sphere(radius);
+    popMatrix();
   }
   
   void update() {
-    time += .1;
+    time += TIME_STEP;
     updatePosition();
     updateVelocity();
     
@@ -120,13 +125,15 @@ class WaterParticle {
   
   void print() {
     println("time: " + time +
-            " | oX: " + origin.x +
-            " | oY: " + origin.y +
-            " | posX: " + position.x +
-            " | posY: " + position.y +
-            " | mag: " + magnitude +
-            " | velY: " + velocity.y +
-            " | theta: " + theta +
+            " | oX: " + int(origin.x) +
+            " | oY: " + int(origin.y) +
+            " | oZ: " + int(origin.z) +
+            " | posX: " + int(position.x) +
+            " | posY: " + int(position.y) +
+            " | posZ: " + int(position.z) +
+            " | mag: " + int(magnitude) +
+            " | thetaX: " + int(thetaX) +
+            " | thetaZ: " + int(thetaZ) +
             " | radius: " + radius +
             " | flipped: " + flipped);
   }
@@ -137,7 +144,7 @@ class Fountain {
    
    Fountain() {
      particles = new ArrayList();
-     particles.add(new WaterParticle()); //TODO: remove, for testing only
+     particles.add(new WaterParticle());
    }
  
    void spawnParticle() {
@@ -165,13 +172,53 @@ class Fountain {
 }
 
 void setup() {
- size(600, 600, P3D);
+ size(800, 800, P3D);
  noStroke();
+ eyeX = width/2;
+ eyeY = height/2;
+ eyeZ = d;
  fountain = new Fountain();
 }
 
 void draw() {
-  background(0);
+  background(255);
+  lights();
+  fill(125);
+  rect(0, 595, 800, 200);
   fountain.spawnParticle();
   fountain.run();
+ 
+  if (eyeZ<0)
+    camera(eyeX, eyeY, eyeZ, 
+    width/2, height/2, 0, 
+    0, -1, 0);
+  else
+    camera(eyeX, eyeY, eyeZ, 
+    width/2, height/2, 0, 
+    0, 1, 0);
+}
+
+void keyPressed() {
+  switch(key) {
+  case CODED:
+    if (keyCode == UP) {
+      camAngle += 5;
+    }
+    if (keyCode == DOWN) {
+      camAngle -= 5;
+    }
+    break;
+  default:
+    break;
+  }
+ 
+  if (camAngle >= 360) {
+    camAngle = 0;
+  }
+  eyeY = (height/2) -d * (sin(radians(camAngle)));
+  eyeZ = d * cos(radians(camAngle));
+  println("Angle: " + camAngle + 
+          " | x: " + eyeX + 
+          " | y: " + eyeY +
+          " | z: " + eyeZ);
 }
