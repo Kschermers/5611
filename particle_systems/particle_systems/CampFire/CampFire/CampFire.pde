@@ -8,8 +8,8 @@ import peasy.*;
 Fire campfire;
 PeasyCam cam;
 float TIME_STEP = .055; //Global for adjusting speed of simulation
-int SPAWN_RATE = 40; //Global for # of particles spawned each frame. Can drastically effect performance
-
+int SPAWN_RATE = 200; //Global for # of particles spawned each frame. Can drastically effect performance
+int pCount = 0;
 
 class FireParticle {
   
@@ -30,14 +30,15 @@ class FireParticle {
   int gStep = 255;
   int cStep = 0;
   boolean oob;
+  float smokeDespawn;
   
   FireParticle() { //default constructor
     
-    origin = new  PVector(width/2, 600, 0);
+    origin = new  PVector(width/2, height/2, 0);
     position = new PVector();
     velocity = new PVector();
     initialVelocity();
-    oV = random(0,10); //random velocity
+    oV = random(3,12); //random velocity
     thetaX = random(0,360); //random angle
     thetaZ = random(0,360);
     radius = 10;
@@ -46,21 +47,6 @@ class FireParticle {
     randomFlip();
     splash = false;
     oob = false;
-  }
-  
-  FireParticle(FireParticle that) { //recursive constructor
-    
-    origin = new PVector(that.position.x, that.position.y, that.position.z);
-    position = new PVector();
-    velocity = new PVector();
-    initialVelocity();
-    oV = that.magnitude;
-    thetaX = that.thetaX;
-    thetaZ = that.thetaZ;
-    radius = that.radius * .75;
-    time = 0;
-    flipped = that.flipped;
-    splash = false;
   }
   
   void initialVelocity() {
@@ -87,10 +73,10 @@ class FireParticle {
   
   void updatePosition() {
     if (flipped) {
-      position.x = origin.x + (oV * time * cos(radians(thetaX)));
+      position.x = origin.x + (oV * time * cos(radians(thetaX)) * cos(radians(thetaZ)));
       position.z = origin.z + (oV * time * cos(radians(thetaX)) * sin(radians(thetaZ)));
     } else {
-      position.x = origin.x - (oV * time * cos(radians(thetaX)));
+      position.x = origin.x - (oV * time * cos(radians(thetaX)) * cos(radians(thetaZ)));
       position.z = origin.z - (oV * time * cos(radians(thetaX)) * sin(radians(thetaZ)));
     }
     position.y = origin.y + (oV * time * sin(radians(thetaX)) - (acceleration/2 * time * time));
@@ -100,11 +86,14 @@ class FireParticle {
   void render() {
     
     if (gStep == 0 && rStep == 0) {
-         print();
          time = 0;
          splash = true;
          origin = new PVector(position.x, position.y, position.z);
          position = new PVector();
+         smokeDespawn = random(-200,100);
+         if (random(0,1) < .75) {
+           oob = true; //some fire doesnt turn into smoke particle
+         }
     } else if (gStep > 125) {
       gStep -= 2.5;
     } else {
@@ -133,14 +122,14 @@ class FireParticle {
     randomFlip();
     if (flipped) {
       position.x = origin.x + sin(position.y * .075);
-      //position.z = origin.z + sin(position.y * .075);
+      position.z = origin.z + sin(position.y * .075);
     } else {
       position.x = origin.x + sin(position.y * .075);
-      //position.z = origin.z + sin(position.y * .075);
+      position.z = origin.z + sin(position.y * .075);
     }
     position.y = position.y - 3.5;
     
-    if (position.y < random(-200,200)) {
+    if (position.y < smokeDespawn) {
       oob = true;
     }
   }
@@ -192,6 +181,7 @@ class Fire {
    void spawnParticle() {
      for (int i = 0; i < SPAWN_RATE; i++) {
        particles.add(new FireParticle());
+       pCount++;
      }
   }
 
@@ -201,6 +191,7 @@ class Fire {
       fp.run();
       if (fp.oob) {
         particles.remove(i);
+        pCount--;
       }
     }
   }
@@ -210,14 +201,17 @@ void setup() {
  size(800, 800, P3D);
  strokeWeight(3.5);
  campfire = new Fire();
- cam = new PeasyCam(this, 500);
- cam.setMinimumDistance(50);
- cam.setMaximumDistance(500);
- cam.lookAt(400,600,0);
+ cam = new PeasyCam(this, 1000);
+ cam.setMinimumDistance(100);
+ cam.setMaximumDistance(2000);
+ cam.lookAt(width/2,height/2 - 100,0);
 }
 
 void draw() {
   background(255);
   campfire.spawnParticle();
   campfire.run();
+  
+  String runtimeReport = "Particles: " + str(pCount) + " | Frames: " + str(round(frameRate)) + "\n";
+  surface.setTitle(runtimeReport);
 }

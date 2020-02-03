@@ -157,7 +157,7 @@ class Fountain {
       if (wp.splash) {
         particles.remove(i);
         pCount--;
-        wp.print();
+        //wp.print();
         
         if (wp.splashCount <= SPLASH_COUNT) {   
           particles.add(new WaterParticle(wp));
@@ -167,6 +167,30 @@ class Fountain {
         }
       }
     }
+  }
+}
+
+void translateCam(char coord, int step) {
+  float[] camCoords = cam.getLookAt();
+  
+  if (coord =='x') {
+    cam.reset();
+    cam.lookAt(camCoords[0] + step, camCoords[1], camCoords[2], 500);
+  } else if (coord == 'y') {
+    cam.reset();
+    cam.lookAt(camCoords[0], camCoords[1] + step, camCoords[2], 500);
+  }
+}
+
+void keyPressed() {
+  if (keyCode == LEFT) {
+    translateCam('x', -10);
+  } else if (keyCode == RIGHT) {
+    translateCam('x', 10);
+  } else if (keyCode == UP) {
+    translateCam('y', -10);
+  } else if (keyCode == DOWN) {
+     translateCam('y', 10);
   }
 }
 
