@@ -7,9 +7,10 @@ import peasy.*;
 
 Fire campfire;
 PeasyCam cam;
+
 float TIME_STEP = .055; //Global for adjusting speed of simulation
 int SPAWN_RATE = 200; //Global for # of particles spawned each frame. Can drastically effect performance
-int pCount = 0;
+int pCount = 0; //number of particles on screen
 
 class FireParticle {
   
@@ -26,11 +27,13 @@ class FireParticle {
   float time; //lifetime of particle TODO: switch to 'real-time'
   boolean flipped; //direction of particle; false = left
   boolean splash; //has particle splashed
-  int rStep = 255;
-  int gStep = 255;
-  int cStep = 0;
-  boolean oob;
-  float smokeDespawn;
+  
+  int rStep = 255; //color control for fire
+  int gStep = 255; //color control for fire
+  
+  int cStep = 0; //color control for smoke
+  boolean oob; //out of bounds field
+  float smokeDespawn; //randomness of smoke lifetime
   
   FireParticle() { //default constructor
     
@@ -121,11 +124,11 @@ class FireParticle {
     time += TIME_STEP;
     randomFlip();
     if (flipped) {
-      position.x = origin.x + sin(position.y * .075);
-      position.z = origin.z + sin(position.y * .075);
+      position.x = origin.x + 1.5 * sin(position.y * .05);
+      position.z = origin.z + 1.5 * sin(position.y * .05);
     } else {
-      position.x = origin.x + sin(position.y * .075);
-      position.z = origin.z + sin(position.y * .075);
+      position.x = origin.x + 1.5 * sin(position.y * .05);
+      position.z = origin.z + 1.5 * sin(position.y * .05);
     }
     position.y = position.y - 3.5;
     
@@ -209,6 +212,26 @@ void setup() {
 
 void draw() {
   background(255);
+  
+  stroke(101,67,33);
+  fill(101,67,33);
+  
+  pushMatrix(); //log
+  translate(400,410,0);
+  pushMatrix();
+  rotateY(.7);
+  box(75,15,20);
+  popMatrix();
+  popMatrix();
+  
+  pushMatrix(); //log
+  translate(400,410,0);
+  pushMatrix();
+  rotateY(-.7);
+  box(75,15,20);
+  popMatrix();
+  popMatrix();
+  
   campfire.spawnParticle();
   campfire.run();
   
