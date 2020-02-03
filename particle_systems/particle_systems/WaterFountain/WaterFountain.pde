@@ -2,19 +2,16 @@
 //University of Minnesota College of Science and Engineering
 //Janurary 27, 2020
 
-String projectTitle = "Particle Motion";
+String projectTitle = "Water Fountain";
+import peasy.*;
 
 Fountain fountain;
+PeasyCam cam;
 float TIME_STEP = .1; //Global for adjusting speed of simulation
 float SPLASH_FACTOR = .45; //Global variable for controlling splash behavior
 int SPLASH_COUNT = 1;  //Global for # of splashes allowed. Can drastically effect performance
-int SPAWN_RATE = 1; //Global for # of particles spawned each frame. Can drastically effect performance
-float eyeX;
-float eyeY;
-float eyeZ;
-float camAngle = 0;
-int d = 600;
-int depth = -400;
+int SPAWN_RATE = 100; //Global for # of particles spawned each frame. Can drastically effect performance
+int pCount = 0;
 
 class WaterParticle {
   
@@ -35,13 +32,13 @@ class WaterParticle {
   
   WaterParticle() { //default constructor
     
-    origin = new  PVector(width/2, height/2, depth/2);
+    origin = new  PVector(width/2, height/2, 0);
     position = new PVector();
     velocity = new PVector();
     oV = random(40,60); //random velocity
     initialVelocity();
     thetaX = random(55,80); //random launch angle
-    thetaZ = random(0,180);
+    thetaZ = random(0,360);
     radius = 10;
     time = 0;
     flipped = false;
@@ -91,20 +88,19 @@ class WaterParticle {
   
   void updatePosition() {
     if (flipped) {
-      position.x = origin.x + (oV * time * cos(radians(thetaX)));// * cos(radians(thetaZ)));
+      position.x = origin.x + (oV * time * cos(radians(thetaX)) * cos(radians(thetaZ)));
+      position.z = origin.z + (oV * time * cos(radians(thetaX)) * sin(radians(thetaZ)));
     } else {
-      position.x = origin.x - (oV * time * cos(radians(thetaX)));// * cos(radians(thetaZ)));
+      position.x = origin.x - (oV * time * cos(radians(thetaX)) * cos(radians(thetaZ)));
+      position.z = origin.z - (oV * time * cos(radians(thetaX)) * sin(radians(thetaZ)));
     }
     position.y = origin.y - (oV * time * sin(radians(thetaX)) - (acceleration/2 * time * time));
-    position.z = origin.z - (oV * time * cos(radians(thetaX)) * sin(radians(thetaZ)));
+    
   }
   
   void render() {
-    fill(0,0,255);
-    pushMatrix();
-    translate(position.x,position.y,position.z);
-    sphere(radius);
-    popMatrix();
+    stroke(0,0,255);
+    point(position.x,position.y,position.z);
   }
   
   void update() {
@@ -119,8 +115,8 @@ class WaterParticle {
   }
  
   void run() {
-    this.render();
     this.update();
+    this.render();
   }
   
   void print() {
@@ -150,6 +146,7 @@ class Fountain {
    void spawnParticle() {
      for (int i = 0; i < SPAWN_RATE; i++) {
        particles.add(new WaterParticle());
+       pCount++;
      }
   }
 
@@ -159,12 +156,14 @@ class Fountain {
       wp.run();
       if (wp.splash) {
         particles.remove(i);
+        pCount--;
         wp.print();
         
         if (wp.splashCount <= SPLASH_COUNT) {   
           particles.add(new WaterParticle(wp));
           wp.flip();
           particles.add(new WaterParticle(wp));
+          pCount += 2;
         }
       }
     }
@@ -173,52 +172,19 @@ class Fountain {
 
 void setup() {
  size(800, 800, P3D);
- noStroke();
- eyeX = width/2;
- eyeY = height/2;
- eyeZ = d;
+ strokeWeight(2.5);
  fountain = new Fountain();
+ cam = new PeasyCam(this, 500);
+ cam.setMinimumDistance(50);
+ cam.setMaximumDistance(1000);
+ cam.lookAt(400,400,0);
 }
 
 void draw() {
   background(255);
-  lights();
-  fill(125);
-  rect(0, 595, 800, 200);
   fountain.spawnParticle();
   fountain.run();
- 
-  if (eyeZ<0)
-    camera(eyeX, eyeY, eyeZ, 
-    width/2, height/2, 0, 
-    0, -1, 0);
-  else
-    camera(eyeX, eyeY, eyeZ, 
-    width/2, height/2, 0, 
-    0, 1, 0);
-}
-
-void keyPressed() {
-  switch(key) {
-  case CODED:
-    if (keyCode == UP) {
-      camAngle += 5;
-    }
-    if (keyCode == DOWN) {
-      camAngle -= 5;
-    }
-    break;
-  default:
-    break;
-  }
- 
-  if (camAngle >= 360) {
-    camAngle = 0;
-  }
-  eyeY = (height/2) -d * (sin(radians(camAngle)));
-  eyeZ = d * cos(radians(camAngle));
-  println("Angle: " + camAngle + 
-          " | x: " + eyeX + 
-          " | y: " + eyeY +
-          " | z: " + eyeZ);
+  
+  String runtimeReport = "Particles: " + str(pCount) + " | Frames: " + str(round(frameRate)) + "\n";
+  surface.setTitle(runtimeReport);
 }
