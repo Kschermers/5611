@@ -10,7 +10,7 @@ PeasyCam cam;
 float TIME_STEP = .1; //Global for adjusting speed of simulation
 float SPLASH_FACTOR = .45; //Global variable for controlling splash behavior
 int SPLASH_COUNT = 1;  //Global for # of splashes allowed. Can drastically effect performance
-int SPAWN_RATE = 100; //Global for # of particles spawned each frame. Can drastically effect performance
+int SPAWN_RATE = 50; //Global for # of particles spawned each frame. Can drastically effect performance
 int pCount = 0;
 
 class WaterParticle {
@@ -99,7 +99,7 @@ class WaterParticle {
   }
   
   void render() {
-    stroke(0,0,255);
+    stroke(0,0,255,128/(splashCount+1));
     point(position.x,position.y,position.z);
   }
   
@@ -196,7 +196,7 @@ void keyPressed() {
 
 void setup() {
  size(800, 800, P3D);
- strokeWeight(2.5);
+ strokeWeight(4.5);
  fountain = new Fountain();
  cam = new PeasyCam(this, 500);
  cam.setMinimumDistance(50);
@@ -206,6 +206,24 @@ void setup() {
 
 void draw() {
   background(255);
+  
+  pushMatrix(); //fountain sphere
+  stroke(120,120,120);
+  fill(120,120,120);
+  translate(width/2,415,0);
+  sphere(20);
+  popMatrix();
+  
+  pushMatrix(); //floor
+  stroke(180,180,180);
+  fill(180,180,180);
+  translate(width/2,600,0);
+  pushMatrix();
+  rotateX(radians(90));
+  box(5000,5000,10);
+  popMatrix();
+  popMatrix();
+  
   fountain.spawnParticle();
   fountain.run();
   

@@ -109,7 +109,7 @@ class FireParticle {
         gStep = 0;
       }
     }
-    stroke(rStep,gStep,0);
+    stroke(rStep,gStep,0,128);
     point(position.x, position.y, position.z);
   }
   
@@ -139,7 +139,7 @@ class FireParticle {
   
   void renderSmoke() {
 
-    stroke(cStep,cStep,cStep);
+    stroke(cStep,cStep,cStep,128);
     if (cStep < 125) {
       cStep += 5;
     } else {
