@@ -45,9 +45,9 @@ class KVector {
     return acos(this.dot(that) / (this.mag() * that.mag());
   }
   
-  float cross() {
+  KVector cross(KVector that) {
   }
-  
+   return new KVector(this.y * that.z - this.z * that.y, this.z * that.x - this.x * that.z, this.x * that.y - this.y * that.x);
 }
     
     
