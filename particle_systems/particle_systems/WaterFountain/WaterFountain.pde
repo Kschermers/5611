@@ -182,18 +182,6 @@ void translateCam(char coord, int step) {
   }
 }
 
-void keyPressed() {
-  if (keyCode == LEFT) {
-    translateCam('x', -10);
-  } else if (keyCode == RIGHT) {
-    translateCam('x', 10);
-  } else if (keyCode == UP) {
-    translateCam('y', -10);
-  } else if (keyCode == DOWN) {
-     translateCam('y', 10);
-  }
-}
-
 void setup() {
  size(800, 800, P3D);
  strokeWeight(4.5);
@@ -204,7 +192,21 @@ void setup() {
  cam.lookAt(400,400,0);
 }
 
+void keyPressed() {
+}
+
 void draw() {
+  
+  if (keyPressed && keyCode == LEFT) {
+    translateCam('x', -20);
+  } else if (keyPressed && keyCode == RIGHT) {
+    translateCam('x', 20);
+  } else if (keyPressed && keyCode == UP) {
+    translateCam('y', -20);
+  } else if (keyPressed && keyCode == DOWN) {
+     translateCam('y', 20);
+  }
+  
   background(255);
   
   pushMatrix(); //fountain sphere

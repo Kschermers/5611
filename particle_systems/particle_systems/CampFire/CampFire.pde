@@ -9,7 +9,7 @@ Fire campfire;
 PeasyCam cam;
 
 float TIME_STEP = .055; //Global for adjusting speed of simulation
-int SPAWN_RATE = 200; //Global for # of particles spawned each frame. Can drastically effect performance
+int SPAWN_RATE = 150; //Global for # of particles spawned each frame. Can drastically effect performance
 int pCount = 0; //number of particles on screen
 
 class FireParticle {
@@ -41,7 +41,7 @@ class FireParticle {
     position = new PVector();
     velocity = new PVector();
     initialVelocity();
-    oV = random(3,12); //random velocity
+    oV = random(3,10); //random velocity
     thetaX = random(0,360); //random angle
     thetaZ = random(0,360);
     radius = 10;
@@ -200,6 +200,18 @@ class Fire {
   }
 }
 
+void translateCam(char coord, int step) {
+  float[] camCoords = cam.getLookAt();
+  
+  if (coord =='x') {
+    cam.reset();
+    cam.lookAt(camCoords[0] + step, camCoords[1], camCoords[2], 500);
+  } else if (coord == 'y') {
+    cam.reset();
+    cam.lookAt(camCoords[0], camCoords[1] + step, camCoords[2], 500);
+  }
+}
+
 void setup() {
  size(800, 800, P3D);
  strokeWeight(3.5);
@@ -210,7 +222,21 @@ void setup() {
  cam.lookAt(width/2,height/2 - 100,0);
 }
 
+void keyPressed() {
+}
+
 void draw() {
+  
+  if (keyPressed && keyCode == LEFT) {
+    translateCam('x', -50);
+  } else if (keyPressed && keyCode == RIGHT) {
+    translateCam('x', 50);
+  } else if (keyPressed && keyCode == UP) {
+    translateCam('y', -50);
+  } else if (keyPressed && keyCode == DOWN) {
+     translateCam('y', 50);
+  }
+  
   background(255);
   
   stroke(101,67,33);
@@ -230,6 +256,24 @@ void draw() {
   rotateY(-.7);
   box(75,15,20);
   popMatrix();
+  popMatrix();
+  
+  stroke(76,187,23); //grass
+  fill(76,187,23);
+  pushMatrix();
+  translate(400,420,0);
+  box(5000,10,5000);
+  popMatrix();
+  
+  stroke(250,215,28); //sun
+  fill(250,215,28);
+  sphere(40);
+  
+  stroke(135,206,235);
+  fill(135,206,235);
+  pushMatrix();
+  translate(0,-1000,-5000);
+  box(10000,5000,5);
   popMatrix();
   
   campfire.spawnParticle();
