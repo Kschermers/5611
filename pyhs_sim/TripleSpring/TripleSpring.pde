@@ -4,36 +4,36 @@
 
 //Create Window
 void setup() {
-  size(400, 500, P3D);
+  size(800, 800, P3D);
   surface.setTitle("Ball on Spring!");
 }
 
 //Simulation Parameters
-float floor = 500;
-float gravity = 10;
-float radius = 10;
-float stringTop = 50;
-float restLen = 40;
-float mass = 10; //TRY-IT: How does changing mass affect resting length?
-float k = 10; //TRY-IT: How does changing k affect resting length?
+float floor = 800;
+float gravity = 5;
+float radius = 5;
+float stringTop = 400;
+float restLen = 5;
+float mass = 1; //TRY-IT: How does changing mass affect resting length?
+float k = .1; //TRY-IT: How does changing k affect resting length?
 float kv = 1;
 
 //Inital positions and velocities of masses
-float anchorX = 150;
-float anchorY = 150;
+float anchorX = 390;
+float anchorY = 390;
 
-float ballY1 = 200;
-float ballX1 = 200;
+float ballY1 = 400;
+float ballX1 = 400;
 float velY1 = 0;
 float velX1 = 0;
 
-float ballY2 = 250;
-float ballX2 = 250;
+float ballY2 = 410;
+float ballX2 = 410;
 float velY2 = 0;
 float velX2 = 0;
 
-float ballY3 = 300;
-float ballX3 = 300;
+float ballY3 = 420;
+float ballX3 = 420;
 float velY3 = 0;
 float velX3 = 0;
 
@@ -44,7 +44,7 @@ void update(float dt){
   //ball 1
   float sx1 = ballX1 - anchorX;
   float sy1 = ballY1 - anchorY;
-  float stringLen1 = sqrt(sx1 * sx1 + sy1 + sy1);
+  float stringLen1 = sqrt(sx1 * sx1 + sy1 * sy1);
   float stringF1 = -k*(stringLen1 - restLen);
   float dirX1 = sx1/stringLen1;
   float dirY1 = sy1/stringLen1;
@@ -128,7 +128,7 @@ void draw() {
   fill(0,0,0);
   
   pushMatrix();
-  line(200,stringTop,ballX1,ballY1);
+  line(400,stringTop,ballX1,ballY1);
   translate(ballX1,ballY1);
   sphere(radius);
   popMatrix();
