@@ -10,13 +10,13 @@ void setup() {
 
 //Simulation Parameters
 float floor = 800;
-float gravity = 5;
+float gravity = 10;
 float radius = 5;
 float stringTop = 400;
 float restLen = 5;
-float mass = 1; //TRY-IT: How does changing mass affect resting length?
-float k = .1; //TRY-IT: How does changing k affect resting length?
-float kv = 1;
+float mass = 20; //TRY-IT: How does changing mass affect resting length?
+float k = 10; //TRY-IT: How does changing k affect resting length?
+float kv = 10;
 
 //Inital positions and velocities of masses
 float anchorX = 390;
@@ -40,7 +40,7 @@ float velX3 = 0;
 
 void update(float dt){
   //Compute (damped) Hooke's law for each spring
-  
+  for (int i = 0; i < 10; i++) {
   //ball 1
   float sx1 = ballX1 - anchorX;
   float sy1 = ballY1 - anchorY;
@@ -84,14 +84,14 @@ void update(float dt){
   //println("l1:",ballY1 - stringTop, " l2:",ballY2 - ballY1, " l3:",ballY3-ballY2);
   
   //Eulerian integration
-  float accX1 = .5*forceX1/mass;
+  float accX1 = .5*forceX1/mass - .5*forceX2/mass;
   float accY1 = gravity + .5*forceY1/mass - .5*forceY2/mass;
   velX1 += accX1*dt;
   velY1 += accY1*dt;
   ballX1 += velX1*dt;
   ballY1 += velY1*dt;
 
-  float accX2 = .5*forceX2/mass;
+  float accX2 = .5*forceX2/mass - .5*forceX3/mass;
   float accY2 = gravity + .5*forceY2/mass - .5*forceY3/mass; 
   velX2 += accX2*dt;
   velY2 += accY2*dt;
@@ -119,16 +119,17 @@ void update(float dt){
     velY3 *= -.9;
     ballY3 = floor - radius;
   }
+  }
 }
 
 //Draw the scene: one sphere per mass, one line connecting each pair
 void draw() {
   background(255,255,255);
-  update(.1); //We're using a fixed, large dt -- this is a bad idea!!
+  update(.01); //We're using a fixed, large dt -- this is a bad idea!!
   fill(0,0,0);
   
   pushMatrix();
-  line(400,stringTop,ballX1,ballY1);
+  line(anchorX,anchorY,ballX1,ballY1);
   translate(ballX1,ballY1);
   sphere(radius);
   popMatrix();
