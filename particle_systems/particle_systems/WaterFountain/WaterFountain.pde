@@ -109,9 +109,15 @@ class WaterParticle {
     updateVelocity();
     
     if (position.y + radius > 600){
-      position.y = 600 - radius;
       splash = true;
+    } else if (position.x < 300 && position.x > 200) {
+      if (position.z < 50 && position.z > -50) {
+        if(position.y > 450) {
+          splash = true;
+        }
+      }
     }
+        
   }
  
   void run() {
@@ -210,8 +216,8 @@ void draw() {
   background(255);
   
   pushMatrix(); //fountain sphere
-  stroke(120,120,120);
-  fill(120,120,120);
+  stroke(212,175,55);
+  fill(212,175,55);
   translate(width/2,415,0);
   sphere(20);
   popMatrix();
@@ -224,6 +230,20 @@ void draw() {
   rotateX(radians(90));
   box(5000,5000,10);
   popMatrix();
+  popMatrix();
+  
+  pushMatrix(); //fountian stand
+  stroke(0,0,0);
+  fill(255,255,255 );
+  translate(width/2,500,0);
+  box(25,150,25);
+  popMatrix();
+  
+  pushMatrix(); //platform
+  stroke(255,0,0);
+  fill(255,0,0);
+  translate(200,450,0);
+  box(100,5,100);
   popMatrix();
   
   fountain.spawnParticle();
