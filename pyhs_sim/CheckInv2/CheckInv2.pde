@@ -47,12 +47,8 @@ void update(double dt) {
       float stringF1 = -k * (stringLen1 - restLen);
       float dirX1 = sx1/stringLen1;
       float dirY1 = sy1/stringLen1;
-      
-      float sx = posX[i+1] - posX[i-1];
-      float sy = posY[i+1]  - posY[i-1];
-      float dirX = sx/sqrt(sx*sx+sy*sy);
-      float dirY = sy/sqrt(sx*sx+sy*sy);
-      float projVel = velX[i]*dirX + velY[i]*dirY;
+
+      float projVel = velX[i]*dirX1 + velY[i]*dirY1;
    
       float dampF = -kV*(projVel-projVelPrev);
       projVelPrev = projVel;
@@ -84,12 +80,7 @@ void update(double dt) {
       float stringF1 = -k * (stringLen1 - restLen);
       float dirX1 = sx1/stringLen1;
       float dirY1 = sy1/stringLen1;
-      
-      float sx = posX[numV-3] - posX[numV-2];
-      float sy = posY[numV-3]  - posY[numV-2];
-      float dirX = sx/sqrt(sx*sx+sy*sy);
-      float dirY = sy/sqrt(sx*sx+sy*sy);
-      projVelPrev = velX[numV-1]*dirX + velY[numV-1]*dirY;
+  
       
       float projVel = velX[numV-1]*dirX1 + velY[numV-1]*dirY1;
       
