@@ -12,7 +12,6 @@ void setup() {
 float floor = 800;
 float gravity = 10;
 float radius = 5;
-float stringTop = 400;
 float restLen = 5;
 float mass = 20; //TRY-IT: How does changing mass affect resting length?
 float k = 10; //TRY-IT: How does changing k affect resting length?
