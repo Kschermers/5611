@@ -14,7 +14,7 @@ Spring s;
 void setup() {
   size(1000, 1000, P3D);
   surface.setTitle("Ball on Spring!");
-  for (int i = 0; i < NUMV; i++) {//0,1,2,3,4
+  for (int i = 0; i < NUMV; i++) {
     p[i] = new Particle(MASS, RAD, GRAV);
     p[i].setPos(500+(i*10),100+(i*25),0);
     p[i].print(i);
@@ -24,7 +24,7 @@ void setup() {
 
 
 void update(float dt) {
-  for (int i = 1; i < NUMV; i++) {//1,2,3
+  for (int i = 1; i < NUMV; i++) {
     Particle[] temp;
     if (i < NUMV-1) {
       temp = new Particle[3];
@@ -39,9 +39,10 @@ void update(float dt) {
     s = new Spring(temp, RESTLEN, KS, KV);
     s.calc();
     p[i].updateAcc(s.forces());
-    p[i].update(dt);
-    p[i].print(i);
     s.render();
+  }
+  for (int i = 0; i < NUMV; i++) {
+    p[i].update(dt);
   }
 }
   
@@ -51,5 +52,4 @@ void draw() {
   background(255,255,255);
   update(.1);
   fill(0,0,0);
-  s.render();
 }
