@@ -1,11 +1,11 @@
 int NUMV = 5;
 float FLOOR = 500;
 float GRAV = 10;
-int MASS = 5;
+int MASS = 1;
 int RAD = 3;
-float RESTLEN = 5;
-float KS = 5;
-float KV = 110;
+float RESTLEN = .1;
+float KS = 1;
+float KV = 10;
 
 Particle[] p = new Particle[NUMV];
 Spring s;
@@ -16,7 +16,7 @@ void setup() {
   surface.setTitle("Ball on Spring!");
   for (int i = 0; i < NUMV; i++) {//0,1,2,3,4
     p[i] = new Particle(MASS, RAD, GRAV);
-    p[i].setPos(500+(i*10),500+(i*25),0);
+    p[i].setPos(500+(i*10),100+(i*25),0);
     p[i].print(i);
   }
   p[0].lock();
