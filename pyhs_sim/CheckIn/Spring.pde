@@ -7,24 +7,24 @@ class Spring {
   float kS;
   float kV;
   
-  float sx;
-  float sy;
-  //float sz;
-  float springLen;
-  float springF;
-  float dirX;
-  float dirY;
-  //float dirZ;
-  float topProjVel;
-  float botProjVel;
-  float dampF;
-  float forceX1;
-  float forceY1;
-  //float forceZ1;
-  float forceX2;
-  float forceY2;
-  //float forceZ2;
-  boolean last;
+  float sx = 0;
+  float sy = 0;
+  //float sz = 0;
+  float springLen = 0;
+  float springF = 0;
+  float dirX = 0;
+  float dirY = 0;
+  //float dirZ = 0;
+  float topProjVel = 0;
+  float botProjVel = 0;
+  float dampF = 0;
+  float forceX1 = 0;
+  float forceY1 = 0;
+  //float forceZ1 = 0;
+  float forceX2 = 0;
+  float forceY2 = 0;
+  //float forceZ2 = 0;
+  boolean last = false;
   
   Spring(Particle[] p, float rest, float k1, float k2) {
     top = p[0];
@@ -71,8 +71,11 @@ class Spring {
       forceX2 = (springF + dampF) * dirX;
       forceY2 = (springF + dampF) * dirY;
       //forceZ2 = (springF + dampF) * dirZ;
+    } else {
+      forceX2 = 0;
+      forceY2 = 0;
+      //forceZ2 = 0;
     }
-    
   }
   
   float[] forces() {

@@ -8,11 +8,11 @@ class Particle {
   int radius;
   boolean locked;
   
-  public Particle(int m, int rad) {
+  public Particle(int m, int rad, float grav) {
     pos = new KVector();
     vel = new KVector();
     acc = new KVector();
-    gravity = 10;
+    gravity = grav;
     mass = m;
     radius = rad;
     locked = false;
@@ -22,7 +22,7 @@ class Particle {
     pos = new KVector(that.pos);
     vel = new KVector(that.vel);
     acc = new KVector(that.acc);
-    gravity = 10;
+    gravity = that.gravity;
     mass = that.mass;
     radius = that.radius;
     locked = false;
@@ -68,7 +68,7 @@ class Particle {
             " | vel.y: " + vel.y +
             " | vel.z: " + vel.z +
             " | acc.x: " + acc.x +
-            " | acc.x: " + acc.y +
+            " | acc.y: " + acc.y +
             " | acc.x: " + acc.z);
             
   }
