@@ -41,41 +41,41 @@ class Spring {
   }
   
   void calc() {
-    sx = mid.pos.x - top.pos.x;
-    sy = mid.pos.y - top.pos.y;
-    //sz = mid.pos.z - top.pos.z;
-    springLen = sqrt(sx*sx + sy*sy);// + sz * sz);
-    springF = -kS*(springLen - restLen);
-    dirX = sx/springLen;
-    dirY = sy/springLen;
-    //dirZ = sz/springLen;
-    topProjVel = top.vel.x * dirX + top.vel.y * dirY;// + top.vel.z * dirZ;
-    botProjVel = mid.vel.x * dirX + mid.vel.y * dirY;// + mid.vel.z * dirZ;
-    dampF = -kV*(botProjVel - topProjVel);
-    forceX1 = (springF + dampF) * dirX;
-    forceY1 = (springF + dampF) * dirY;
-    //forceZ1 = (springF + dampF) * dirZ;
     
+    springFuncs(top,mid,1); 
     if (!last) {
-      sx = bot.pos.x - mid.pos.x;
-      sy = bot.pos.y - mid.pos.y;
+      springFuncs(mid,bot,2);
+    } else {
+      forceX2 = 0;
+      forceY2 = 0;
+      //forceZ2 = 0;
+    }
+  }
+  
+  void springFuncs(Particle a, Particle b, int i) {
+      sx = b.pos.x - a.pos.x;
+      sy = b.pos.y - a.pos.y;
       //sz = bot.pos.z - mid.pos.z;
       springLen = sqrt(sx*sx + sy*sy);// + sz * sz);
       springF = -kS*(springLen - restLen);
       dirX = sx/springLen;
       dirY = sy/springLen;
       //dirZ = sz/springLen;
-      topProjVel = mid.vel.x * dirX + mid.vel.y * dirY;// + mid.vel.z * dirZ;
-      botProjVel = bot.vel.x * dirX + bot.vel.y * dirY;// + bot.vel.z * dirZ;
+      topProjVel = a.vel.x * dirX + a.vel.y * dirY;// + a.vel.z * dirZ;
+      botProjVel = b.vel.x * dirX + b.vel.y * dirY;// + b.vel.z * dirZ;
       dampF = -kV*(botProjVel - topProjVel);
-      forceX2 = (springF + dampF) * dirX;
-      forceY2 = (springF + dampF) * dirY;
-      //forceZ2 = (springF + dampF) * dirZ;
-    } else {
-      forceX2 = 0;
-      forceY2 = 0;
-      //forceZ2 = 0;
-    }
+      switch (i) {
+        case 1:
+          forceX1 = (springF + dampF) * dirX;
+          forceY1 = (springF + dampF) * dirY;
+          //forceZ1 = (springF + dampF) * dirZ;
+          break;
+        case 2:
+          forceX2 = (springF + dampF) * dirX;
+          forceY2 = (springF + dampF) * dirY;
+          //forceZ2 = (springF + dampF) * dirZ;
+          break;
+      }
   }
   
   float[] forces() {
