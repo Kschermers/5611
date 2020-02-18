@@ -5,7 +5,7 @@ int MASS = 5;
 int RAD = 3;
 float RESTLEN = 5;
 float KS = 5;
-float KV = 10;
+float KV = 110;
 
 Particle[] p = new Particle[NUMV];
 Spring s;
@@ -24,7 +24,6 @@ void setup() {
 
 
 void update(float dt) {
-  for (int a = 0; a < 100; a++) {
   for (int i = 1; i < NUMV; i++) {//1,2,3
     Particle[] temp;
     if (i < NUMV-1) {
@@ -44,12 +43,13 @@ void update(float dt) {
     p[i].print(i);
     s.render();
   }
-  }
 }
-
+  
+  
 //Draw the scene: one sphere per mass, one line connecting each pair
 void draw() {
   background(255,255,255);
-  update(.01); //We're using a fixed, large dt -- this is a bad idea!!
+  update(.1);
   fill(0,0,0);
+  s.render();
 }

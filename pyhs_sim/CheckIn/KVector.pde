@@ -31,7 +31,7 @@ class KVector {
     x = a;
     y = b;
     z = c;
-  }s
+  }
   
   void add(KVector that) {
     this.x += that.x;

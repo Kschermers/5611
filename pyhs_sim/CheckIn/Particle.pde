@@ -43,7 +43,7 @@ class Particle {
        vel.add(acc.scalar(dt));
        pos.add(vel.scalar(dt));
     }
-    render();
+    //render();
   }
   
   void updateAcc(float[] forces) {
