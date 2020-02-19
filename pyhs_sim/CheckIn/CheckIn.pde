@@ -9,10 +9,11 @@ float KV = 10;
 
 Particle[] p = new Particle[NUMV];
 Spring[] s = new Spring[NUMV-1];
-
+Camera camera;
 //Create Window
 void setup() {
   size(1000, 1000, P3D);
+  camera = new Camera();
   surface.setTitle("Ball on Spring!");
   for (int i = 0; i < NUMV; i++) {
     p[i] = new Particle(MASS, RAD, GRAV);
@@ -58,4 +59,5 @@ void draw() {
     s[i].render();
   }
   fill(0,0,0);
+  camera.Update( 1.0/frameRate );
 }
