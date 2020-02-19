@@ -65,4 +65,10 @@ class KVector {
   KVector cross(KVector that) {
    return new KVector(this.y * that.z - this.z * that.y, this.z * that.x - this.x * that.z, this.x * that.y - this.y * that.x);
   }
+  
+  void print() {
+    println("x: " + x +
+          " | y: " + y +
+          " | z: " + z);
+  }
 }

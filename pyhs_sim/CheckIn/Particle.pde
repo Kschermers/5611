@@ -4,11 +4,11 @@ class Particle {
   KVector vel;
   KVector acc;
   float gravity;
-  int mass;
+  float mass;
   int radius;
   boolean locked;
   
-  public Particle(int m, int rad, float grav) {
+  public Particle(float m, int rad, float grav) {
     pos = new KVector();
     vel = new KVector();
     acc = new KVector();
@@ -43,13 +43,12 @@ class Particle {
        vel.add(acc.scalar(dt));
        pos.add(vel.scalar(dt));
     }
-    //render();
   }
   
-  void updateAcc(float[] forces) {
-    acc.x = .5*forces[0]/mass - .5*forces[3]/mass;
-    acc.y = gravity + .5*forces[1]/mass - .5*forces[4]/mass;
-    //acc.z = .5*forces[2]/mass - .5*forces[5]/mass;
+  void updateAcc(KVector top, KVector bot) {
+    acc.x = (top.x - bot.x)/mass;
+    acc.y = (gravity + top.y - bot.y)/mass;
+    //acc.z = (top.z + .bot.z)/mass;
   }
   
   void render() {
