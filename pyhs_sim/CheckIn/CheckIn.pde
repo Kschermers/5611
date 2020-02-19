@@ -16,7 +16,7 @@ void setup() {
   surface.setTitle("Ball on Spring!");
   for (int i = 0; i < NUMV; i++) {
     p[i] = new Particle(MASS, RAD, GRAV);
-    p[i].setPos(500+(i*10),100+(i*10),0);
+    p[i].setPos(500+(i*10),100+(i*10),0+(i*10));
     p[i].print(i);
     if (i < NUMV-1) {
       s[i] = new Spring(RESTLEN, KS, KV);
@@ -54,8 +54,8 @@ void draw() {
   for (int i = 0; i < 100; i++) {
     update(.001);
   }
-  for (int i = 0; i < NUMV-1; i++) {
-    s[i].render();
+  for (Spring i : s) {
+    i.render();
   }
   fill(0,0,0);
 }

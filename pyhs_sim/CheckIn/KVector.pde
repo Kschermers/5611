@@ -68,7 +68,7 @@ class KVector {
   
   void print() {
     println("x: " + x +
-          " | y: " + y +
-          " | z: " + z);
+            " | y: " + y +
+            " | z: " + z);
   }
 }
