@@ -26,7 +26,6 @@ void setup() {
   p[0].lock();
 }
 
-
 void update(float dt) {
 
   s[0].calc(p[0],p[1]);
