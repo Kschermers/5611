@@ -46,8 +46,8 @@ class Particle {
   }
   
   void updateAcc(KVector top, KVector bot) {
-    acc.x = (top.x + bot.x)/mass;
-    acc.y = (gravity + top.y + bot.y)/mass;
+    acc.x = (top.x - bot.x)/mass;
+    acc.y = (gravity + top.y - bot.y)/mass;
     //acc.z = (top.z + .bot.z)/mass;
   }
   

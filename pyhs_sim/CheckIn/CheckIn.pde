@@ -1,11 +1,11 @@
-int NUMV = 5;
+int NUMV = 20;
 float FLOOR = 500;
 float GRAV = 10;
-float MASS = 2;
+float MASS = 1;
 int RAD = 3;
-float RESTLEN = 5;
-float KS = 1;
-float KV = 5;
+float RESTLEN = 10;
+float KS = 5;
+float KV = 10;
 
 Particle[] p = new Particle[NUMV];
 Spring[] s = new Spring[NUMV-1];
@@ -16,7 +16,7 @@ void setup() {
   surface.setTitle("Ball on Spring!");
   for (int i = 0; i < NUMV; i++) {
     p[i] = new Particle(MASS, RAD, GRAV);
-    p[i].setPos(500,100+(i*5),0);
+    p[i].setPos(500+(i*10),100+(i*10),0);
     p[i].print(i);
     if (i < NUMV-1) {
       s[i] = new Spring(RESTLEN, KS, KV);
@@ -28,12 +28,10 @@ void setup() {
 
 void update(float dt) {
 
-  s[0].calc(p[1],p[0]);
-  s[1].calc(p[2],p[1]);
-  p[1].updateAcc(s[0].forces, s[1].forces);
+  s[0].calc(p[0],p[1]);
   
-  for (int i = 2; i < NUMV-1; i++) {
-    s[i].calc(p[i+1],p[i]);
+  for (int i = 1; i < NUMV-1; i++) {
+    s[i].calc(p[i],p[i+1]);
     p[i].updateAcc(s[i-1].forces, s[i].forces);
   }
   
@@ -54,7 +52,7 @@ void update(float dt) {
 //Draw the scene: one sphere per mass, one line connecting each pair
 void draw() {
   background(255,255,255);
-  for ( int i = 0; i < 1; ++i ) {
+  for ( int i = 0; i < 20; ++i ) {
     update(.02);
   }
   fill(0,0,0);

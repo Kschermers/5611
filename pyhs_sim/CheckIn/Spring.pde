@@ -48,9 +48,10 @@ class Spring {
       //dirZ = sz/springLen;
       topProjVel = a.vel.x * dirX + a.vel.y * dirY;// + a.vel.z * dirZ;
       botProjVel = b.vel.x * dirX + b.vel.y * dirY;// + b.vel.z * dirZ;
-      //dampF = -kV*(botProjVel - topProjVel);
-      forces.x = (springF + dampF) * dirX;
-      forces.y = (springF + dampF) * dirY;
+      dampF = -kV*(botProjVel - topProjVel);
+      forces.set((springF + dampF) * dirX, (springF + dampF) * dirY, 0);
+      //forces.x = (springF + dampF) * dirX;
+      //forces.y = (springF + dampF) * dirY;
       //forces.z = (springF + dampF) * dirZ;
   }
   
