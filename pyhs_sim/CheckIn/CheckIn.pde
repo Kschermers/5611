@@ -1,4 +1,4 @@
-int NUMV = 20;
+int NUMV = 5;
 float FLOOR = 500;
 float GRAV = 10;
 float MASS = 1;
@@ -41,10 +41,6 @@ void update(float dt) {
   for (int j = 0; j < NUMV; j++) {
     p[j].update(dt);
     p[j].print(j);
-    if (j < NUMV-1) {
-      s[j].print();
-      s[j].render();
-    }
   }
   for (int i = 0; i < NUMV; i++) {
     p[i].update(dt);
@@ -55,8 +51,11 @@ void update(float dt) {
 //Draw the scene: one sphere per mass, one line connecting each pair
 void draw() {
   background(255,255,255);
-  for ( int i = 0; i < 20; ++i ) {
-    update(.02);
+  for (int i = 0; i < 100; i++) {
+    update(.001);
+  }
+  for (int i = 0; i < NUMV-1; i++) {
+    s[i].render();
   }
   fill(0,0,0);
 }
