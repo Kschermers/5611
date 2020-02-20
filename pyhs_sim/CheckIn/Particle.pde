@@ -45,10 +45,10 @@ class Particle {
     }
   }
   
-  void updateAcc(KVector top, KVector bot) {
-    acc.x = (top.x - bot.x)/mass;
-    acc.y = (gravity + top.y - bot.y)/mass;
-    acc.z = (top.z - bot.z)/mass;
+  void updateAcc(KVector topVert, KVector botVert, KVector leftHorz, KVector rightHorz) {
+    acc.x = ((topVert.x + leftHorz.x) - (botVert.x + rightHorz.x))/mass;
+    acc.y = gravity/mass + ((topVert.y + leftHorz.y) - (botVert.y+ rightHorz.y))/mass;
+    acc.z = ((topVert.z + leftHorz.z) - (botVert.z + rightHorz.z))/mass;
   }
   
   void render() {
@@ -68,7 +68,6 @@ class Particle {
             " | vel.z: " + vel.z +
             " | acc.x: " + acc.x +
             " | acc.y: " + acc.y +
-            " | acc.x: " + acc.z);
-            
+            " | acc.x: " + acc.z);  
   }
 }
