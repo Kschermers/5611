@@ -43,6 +43,7 @@ class Particle {
        vel.add(acc.scalar(dt));
        pos.add(vel.scalar(dt));
     }
+    
   }
   
   void updateAcc(KVector top, KVector bot) {
