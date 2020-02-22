@@ -20,7 +20,7 @@ void setup() {
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(500+(i*15),100+(j*15),0+(i*15));
+      p[i][j].setPos(500+(i*15),100+(j*15),0);
       //p[i].print(i);
       
    }
@@ -135,17 +135,26 @@ void draw() {
   for (int i = 0; i < 100; i++) {
     update(.005);
   }
-  for (int i = 0; i < NUMH; i++) { //update all positions
-    for (int j = 0; j < NUMW; j++) {
-      p[i][j].render();
+  beginShape(TRIANGLES);
+  for (int i = 0; i < NUMH-1; i++) { //update all positions
+    for (int j = 0; j < NUMW-1; j++) {
+      vertex(p[i][j].pos.x, p[i][j].pos.y, p[i][j].pos.z);
+      vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
+      vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z);
+      
+    
+      vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
+      vertex(p[i+1][j+1].pos.x, p[i+1][j+1].pos.y, p[i+1][j+1].pos.z);
+      vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z);
     }
   }
-  for (Spring i : sVert) {
-    i.render();
-  }
-  for (Spring i : sHorz) {
-    i.render();
-  }
+  endShape();
+  //for (Spring i : sVert) {
+  //  i.render();
+  //}
+  //for (Spring i : sHorz) {
+  //  i.render();
+  //}
   
   fill(0,0,0);
   camera.Update( 1.0/frameRate );
