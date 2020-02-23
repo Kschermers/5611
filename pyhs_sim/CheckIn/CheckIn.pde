@@ -131,6 +131,8 @@ void update(float dt) {
       }
     }
   }
+  //not sure on order of drag and collision detection
+  
   //drag
   //some way to apply the forces to particles?? since we've already updated acceleration
   //but drag needs to be calculated triangle by triangle so can't be done in same loop 
