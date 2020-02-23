@@ -20,7 +20,7 @@ class KVector {
     y = b;
     z = c;
   }
-  
+   
   void set(KVector that) {
     x = that.x;
     y = that.y;
@@ -33,23 +33,33 @@ class KVector {
     z = c;
   }
   
-  void add(KVector that) {
-    this.x += that.x;
-    this.y += that.y;
-    this.z += that.z;
+  KVector add(KVector that) {
+    return new KVector(this.x + that.x,
+    this.y + that.y,
+    this.z + that.z);
   }
   
-  void subtract(KVector that) {
-    this.x -= that.x;
-    this.y -= that.y;
-    this.z -= that.z;
+  KVector subtract(KVector that) {
+    return new KVector(this.x - that.x,
+    this.y - that.y,
+    this.z - that.z);
   }
   
   KVector scalar(float k) {
     KVector ret = new KVector(x*k,y*k,z*k);
     return ret;
   }
-  
+  KVector div(float k){
+    return new KVector(this.x/k,
+    this.y/k,
+    this.z/k);
+  }
+  void normalize(){
+    float m = this.mag();
+    this.x/=m;
+    this.y/=m;
+    this.z/=m;
+  }
   float mag() {
     return sqrt(x * x + y * y + z * z);
   }

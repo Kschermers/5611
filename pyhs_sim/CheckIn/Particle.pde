@@ -39,17 +39,18 @@ class Particle {
   }
   
   void update(float dt) {
-    if (!locked) {
-       vel.add(acc.scalar(dt));
-       pos.add(vel.scalar(dt));
-    }
+    //if (!locked) {
+       vel = vel.add(acc.scalar(dt));
+       pos = pos.add(vel.scalar(dt));
+    //}
   }
   
   void updateAcc(KVector topVert, KVector botVert, KVector leftHorz, KVector rightHorz) {
+     if (!locked){
     acc.x = ((topVert.x + leftHorz.x) - (botVert.x + rightHorz.x))/mass;
     acc.y = gravity/mass + ((topVert.y + leftHorz.y) - (botVert.y+ rightHorz.y))/mass;
     acc.z = ((topVert.z + leftHorz.z) - (botVert.z + rightHorz.z))/mass;
-  }
+  }}
   
   void render() {
     pushMatrix();

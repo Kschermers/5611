@@ -36,6 +36,7 @@ class Spring {
   }
   
   void calc(Particle a, Particle b) {
+  
       topPos.set(a.pos);
       botPos.set(b.pos);
       sx = b.pos.x - a.pos.x;
@@ -55,6 +56,7 @@ class Spring {
       //forces.x = (springF + dampF) * dirX;
       //forces.y = (springF + dampF) * dirY;
       //forces.z = (springF + dampF) * dirZ;
+  
   }
   
   void render() {

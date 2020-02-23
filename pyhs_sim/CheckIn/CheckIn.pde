@@ -1,28 +1,33 @@
-int NUMW = 5;
-int NUMH = 5;
+int NUMW = 8;
+int NUMH = 8;
 float FLOOR = 500;
 float GRAV = 8;
 float MASS = 1;
 int RAD = 1;
 float RESTLEN = 10;
-float KS = 5;
-float KV = 5;
+float KS = 15;
+float KV = 15;
+float dragp = 1.225;
+float dragcd = 2;
 
 Particle[][] p = new Particle[NUMH][NUMW];
 Spring[] sVert = new Spring[NUMW*(NUMH-1)];
 Spring[] sHorz = new Spring[NUMH*(NUMW-1)];
+KVector spherePos = new KVector(500,100,0);
+float sphereR = 10;
 Camera camera;
 //Create Window
 void setup() {
+  noStroke();
   size(1000, 1000, P3D);
   camera = new Camera();
   surface.setTitle("Ball on Spring!");
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(500+(i*15),100+(j*15),0);
+      p[i][j].setPos(500+(i*15),100+(j*15),0+(i*-15));
       //p[i].print(i);
-      
+      p[i][j].vel = new KVector(-2,-2,0);
    }
   }
  for (int i = 0; i < sHorz.length; i ++) {
@@ -126,23 +131,73 @@ void update(float dt) {
       }
     }
   }
+  //drag
+  //some way to apply the forces to particles??
+  //for(int i = 0; i < NUMH -1; i ++){
+  //  for(int j = 0; j < NUMW -1; j++){
+  //    KVector[] t1 = new KVector[3];
+  //    t1[0] = p[i][j].pos;
+  //    t1[1] = p[i][j+1].pos;
+  //    t1[2] = p[i+1][j].pos;
+  //    KVector v1 = p[i][j].vel.add(p[i][j+1].vel).add(p[i+1][j].vel).div(3);
+  //    KVector nstar1 =  t1[1].subtract(t1[0]).cross(t1[2].subtract(t1[0]));
+  //    KVector v2an1 = nstar1.scalar((v1.mag() * v1.dot(nstar1)) / (2*nstar1.mag()));
+  //    KVector faero1 = v2an1.scalar(-.5 * dragp * dragcd).div(3);
+      
+      
+  //    KVector[] t2 = new KVector[3];
+  //    t2[0] = p[i][j+1].pos;
+  //    t2[1] = p[i+1][j+1].pos;
+  //    t2[2] = p[i+1][j].pos;
+  //    KVector v2 = p[i][j+1].vel.add(p[i+1][j+1].vel).add(p[i+1][j].vel).div(3);
+  //    KVector nstar2 = t2[1].subtract(t2[0]).cross(t2[2].subtract(t2[0]));
+  //    KVector v2an2 = nstar2.scalar((v2.mag() * v2.dot(nstar2)) / (2*nstar2.mag()));
+  //    KVector faero2 = v2an2.scalar(-.5 * dragp * dragcd).div(3);
+      
+  //  }
+  //}
+  
+  //collision detection
+  //for(int i = 0; i < NUMH; i++){
+  //  for(int j = 0; j < NUMW; j++){
+  //    float d = abs(sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
+  //    if (d < sphereR + .9){
+  //      KVector n = spherePos.subtract(p[i][j].pos).scalar(-1);
+  //      n.normalize();
+  //      KVector bounce = np.multiply(np.dot(p[i][j].vel,n),n);
+  //      p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
+  //      p[i][j].pos += np.multiply(.1 + sphereR - d, n);
+        //what is np???
+        
+  //    }
+  //  }
+  //}
 }
   
-  
+float squared(float x){
+  return x * x;
+}
 //Draw the scene: one sphere per mass, one line connecting each pair
 void draw() {
   background(255,255,255);
   for (int i = 0; i < 100; i++) {
     update(.005);
   }
+  pushMatrix();
+  fill(255,0,0);
+  translate(spherePos.x,spherePos.y,spherePos.z);
+  sphere(sphereR);
+  popMatrix();
+  fill(0,0,0);
   beginShape(TRIANGLES);
   for (int i = 0; i < NUMH-1; i++) { //update all positions
     for (int j = 0; j < NUMW-1; j++) {
+      //triangle 1
       vertex(p[i][j].pos.x, p[i][j].pos.y, p[i][j].pos.z);
       vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
       vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z);
       
-    
+      //triangle 2
       vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
       vertex(p[i+1][j+1].pos.x, p[i+1][j+1].pos.y, p[i+1][j+1].pos.z);
       vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z);
@@ -156,6 +211,6 @@ void draw() {
   //  i.render();
   //}
   
-  fill(0,0,0);
+  
   camera.Update( 1.0/frameRate );
 }
