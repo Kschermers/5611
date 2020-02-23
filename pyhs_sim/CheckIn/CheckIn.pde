@@ -197,10 +197,15 @@ void draw() {
   translate(spherePos.x,spherePos.y,spherePos.z);
   sphere(sphereR);
   popMatrix();
-  fill(0,0,0);
+  //fill(0,0,0);
   beginShape(TRIANGLES);
   for (int i = 0; i < NUMH-1; i++) { //update all positions
     for (int j = 0; j < NUMW-1; j++) {
+      if(j%2==0 ){
+        fill(0,255,0);
+      } else {
+        fill(128,0,128);
+      }
       //triangle 1
       vertex(p[i][j].pos.x, p[i][j].pos.y, p[i][j].pos.z);
       vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
@@ -213,13 +218,7 @@ void draw() {
     }
   }
   endShape();
-  //for (Spring i : sVert) {
-  //  i.render();
-  //}
-  //for (Spring i : sHorz) {
-  //  i.render();
-  //}
-  
+
   
   camera.Update( 1.0/frameRate );
     String runtimeReport = 
