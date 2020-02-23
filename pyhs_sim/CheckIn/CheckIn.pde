@@ -132,7 +132,10 @@ void update(float dt) {
     }
   }
   //drag
-  //some way to apply the forces to particles??
+  //some way to apply the forces to particles?? since we've already updated acceleration
+  //but drag needs to be calculated triangle by triangle so can't be done in same loop 
+  //triangles are t1 and t2 
+  //math from Guy's slides
   //for(int i = 0; i < NUMH -1; i ++){
   //  for(int j = 0; j < NUMW -1; j++){
   //    KVector[] t1 = new KVector[3];
@@ -158,6 +161,7 @@ void update(float dt) {
   //}
   
   //collision detection
+  //i don't know what np is (using Guy's slides)
   //for(int i = 0; i < NUMH; i++){
   //  for(int j = 0; j < NUMW; j++){
   //    float d = abs(sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
