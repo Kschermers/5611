@@ -1,12 +1,12 @@
-int NUMW = 8;
-int NUMH = 8;
+int NUMW = 30;
+int NUMH = 30;
 float FLOOR = 500;
-float GRAV = 8;
-float MASS = 1;
+float GRAV = 5;
+float MASS = .5;
 int RAD = 1;
-float RESTLEN = 10;
-float KS = 15;
-float KV = 15;
+float RESTLEN = 7;
+float KS = 70;
+float KV = 20;
 float dragp = 1.225;
 float dragcd = 2;
 
@@ -25,9 +25,12 @@ void setup() {
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(500+(i*15),100+(j*15),0+(i*-15));
+      p[i][j].setPos(500+(i*4),100+(j*4),0+(i*-4));
       //p[i].print(i);
       p[i][j].vel = new KVector(-2,-2,0);
+      if(j==0){
+        p[i][j].lock();
+      }
    }
   }
  for (int i = 0; i < sHorz.length; i ++) {
@@ -37,8 +40,8 @@ void setup() {
         sVert[j] = new Spring(RESTLEN,KS,KV);
       }
      
-  p[0][0].lock();
-  p[NUMH-1][0].lock();
+  //p[0][0].lock();
+  //p[NUMH-1][0].lock();
 }
 
 void update(float dt) {
@@ -219,4 +222,8 @@ void draw() {
   
   
   camera.Update( 1.0/frameRate );
+    String runtimeReport = 
+
+    " FPS: "+ str(round(frameRate)) +"\n";
+  surface.setTitle("Cloth "+ "  -  " +runtimeReport);
 }
