@@ -13,7 +13,7 @@ float dragcd = 2;
 Particle[][] p = new Particle[NUMH][NUMW];
 Spring[] sVert = new Spring[NUMW*(NUMH-1)];
 Spring[] sHorz = new Spring[NUMH*(NUMW-1)];
-KVector spherePos = new KVector(500,100,0);
+KVector spherePos = new KVector(500,100,-5);
 float sphereR = 10;
 Camera camera;
 //Create Window
@@ -166,21 +166,22 @@ void update(float dt) {
   //}
   
   //collision detection
-  //i don't know what np is (using Guy's slides)
-  //for(int i = 0; i < NUMH; i++){
-  //  for(int j = 0; j < NUMW; j++){
-  //    float d = abs(sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
-  //    if (d < sphereR + .9){
-  //      KVector n = spherePos.subtract(p[i][j].pos).scalar(-1);
-  //      n.normalize();
-  //      KVector bounce = np.multiply(np.dot(p[i][j].vel,n),n);
-  //      p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
-  //      p[i][j].pos += np.multiply(.1 + sphereR - d, n);
-        //what is np???
+  //doesn't work
+  //trying to use Guy's slides
+  for(int i = 0; i < NUMH; i++){
+    for(int j = 0; j < NUMW; j++){
+      float d = abs(sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
+      if (d < sphereR + .9){
+        KVector n = spherePos.subtract(p[i][j].pos).scalar(-1);
+        n.normalize();
+        KVector bounce = n.scalar(p[i][j].vel.dot(n));
+        p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
+        p[i][j].pos = p[i][j].pos.add(n.scalar(.1 + sphereR - d));
+      
         
-  //    }
-  //  }
-  //}
+      }
+    }
+  }
 }
   
 float squared(float x){
