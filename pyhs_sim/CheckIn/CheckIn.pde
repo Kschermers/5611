@@ -13,8 +13,8 @@ float dragcd = 2;
 Particle[][] p = new Particle[NUMH][NUMW];
 Spring[] sVert = new Spring[NUMW*(NUMH-1)];
 Spring[] sHorz = new Spring[NUMH*(NUMW-1)];
-KVector spherePos = new KVector(500,100,-5);
-float sphereR = 10;
+KVector spherePos = new KVector(500,100,-15);
+float sphereR = 20;
 Camera camera;
 //Create Window
 void setup() {
@@ -25,9 +25,9 @@ void setup() {
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(500+(i*4),100+(j*4),0+(i*-4));
+      p[i][j].setPos(600+(i*4.5),0+(j*4.5),-30+(i*4.5));
       //p[i].print(i);
-      p[i][j].vel = new KVector(-2,-2,0);
+     p[i][j].vel = new KVector(-2,0,0);
       if(j==0){
         p[i][j].lock();
       }
@@ -170,13 +170,13 @@ void update(float dt) {
   //trying to use Guy's slides
   for(int i = 0; i < NUMH; i++){
     for(int j = 0; j < NUMW; j++){
-      float d = abs(sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
-      if (d < sphereR + .9){
+      float d = (sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
+      if (abs(d) < sphereR + .09){
         KVector n = spherePos.subtract(p[i][j].pos).scalar(-1);
         n.normalize();
         KVector bounce = n.scalar(p[i][j].vel.dot(n));
         p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
-        p[i][j].pos = p[i][j].pos.add(n.scalar(.1 + sphereR - d));
+        p[i][j].pos = p[i][j].pos.add(n.scalar(.15 + sphereR - d));
       
         
       }
