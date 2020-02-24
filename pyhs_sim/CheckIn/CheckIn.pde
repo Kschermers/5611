@@ -93,6 +93,15 @@ void update(float dt) {
                           edge); //no right
       }
       else if (i == NUMH-1 && j == 0) { //last row, first column
+<<<<<<< HEAD
+        p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces,
+                          edge, //no bottom
+                          edge, //no left
+                          sHorz[(NUMH*j)+i].forces);
+      }
+      else if (i == NUMH-1) { //bottom row
+=======
+>>>>>>> 895844309b996ce4db4ecd45bd293c8f3430ef8f
         p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces,
                           edge, //no bottom
                           edge, //no left
@@ -116,6 +125,21 @@ void update(float dt) {
                           sHorz[(NUMH*(j-1))+i].forces,
                           sHorz[(NUMH*j)+i].forces);
       }
+<<<<<<< HEAD
+
+      else if (j > 0 && i > 0) { //middle
+      int vert1 =(NUMW*(i-1))+j;
+      int vert2 = (NUMW*i)+j;
+      int horz1 =(NUMH*(j-1))+i;
+      int horz2 = (NUMH*j)+i;
+     
+         p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces,
+                          sVert[(NUMW*i)+j].forces,
+                          sHorz[(NUMH*(j-1))+i].forces,
+                          sHorz[(NUMH*j)+i].forces);
+      }
+=======
+>>>>>>> 895844309b996ce4db4ecd45bd293c8f3430ef8f
        else if (i == 0 && j == 0) { //first row, first column
         p[i][j].updateAcc(edge, //no top
                           sVert[(NUMW*i)+j].forces, 
