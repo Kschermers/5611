@@ -141,15 +141,22 @@ void update(float dt) {
   //but drag needs to be calculated triangle by triangle so can't be done in same loop 
   //triangles are t1 and t2 
   //math from Guy's slides
+  KVector[][] drag = new KVector[NUMH][NUMW];
+  for(int i = 0; i < NUMH; i ++){
+    for(int j = 0; j < NUMW; j++){
+      drag[i][j] = new KVector();
+    }
+  }
+  
   for(int i = 0; i < NUMH -1; i ++){
     for(int j = 0; j < NUMW -1; j++){
       KVector[] t1 = new KVector[3];
       t1[0] = p[i][j].pos;
       t1[1] = p[i][j+1].pos;
       t1[2] = p[i+1][j].pos;
-      KVector v1 = p[i][j].vel.add(p[i][j+1].vel).add(p[i+1][j].vel).div(3);
+      KVector v1 = p[i][j].vel.add(p[i][j+1].vel.add(p[i+1][j].vel)).div(3); //v_air??
       KVector nstar1 = t1[1].subtract(t1[0]).cross(t1[2].subtract(t1[0]));
-      KVector v2an1 = nstar1.scalar((v1.mag() * v1.dot(nstar1)) / (2*nstar1.mag()));
+      KVector v2an1 = nstar1.scalar((v1.mag() * v1.dot(nstar1)) / (2 * nstar1.mag()));
       KVector faero1 = v2an1.scalar(-.5 * dragp * dragcd).div(3);
       
       
@@ -157,36 +164,45 @@ void update(float dt) {
       t2[0] = p[i][j+1].pos;
       t2[1] = p[i+1][j+1].pos;
       t2[2] = p[i+1][j].pos;
-      KVector v2 = p[i][j+1].vel.add(p[i+1][j+1].vel).add(p[i+1][j].vel).div(3);
+      KVector v2 = p[i][j+1].vel.add(p[i+1][j+1].vel.add(p[i+1][j].vel)).div(3); //v_air??
       KVector nstar2 = t2[1].subtract(t2[0]).cross(t2[2].subtract(t2[0]));
-      KVector v2an2 = nstar2.scalar((v2.mag() * v2.dot(nstar2)) / (2*nstar2.mag()));
+      KVector v2an2 = nstar2.scalar((v2.mag() * v2.dot(nstar2)) / (2 * nstar2.mag()));
       KVector faero2 = v2an2.scalar(-.5 * dragp * dragcd).div(3);
         
-      //faero1.print();
-      //faero2.print();
+      if (i == 0 && j == 0) {
+        faero1.print();
+        faero2.print();
+      }
       
-      /*
-      p[i][j].addDrag(faero1);
+      drag[i][j].set(drag[i][j].add(faero1));
       
-      p[i][j+1].addDrag(faero1);
-      p[i][j+1].addDrag(faero2);
-      
-      p[i+1][j].addDrag(faero1);
-      p[i+1][j].addDrag(faero2);      
+      drag[i][j+1].set(drag[i][j+1].add(faero1).add(faero2));
+         
+      drag[i+1][j].set(drag[i+1][j].add(faero1).add(faero2));
 
-      p[i+1][j+1].addDrag(faero2);
-      */
-      /*
-      p[i][j].subDrag(faero1);
-      
-      p[i][j+1].subDrag(faero1);
-      p[i][j+1].subDrag(faero2);
-      
-      p[i+1][j].subDrag(faero1);
-      p[i+1][j].subDrag(faero2);      
-
-      p[i+1][j+1].subDrag(faero2);
-      */
+      drag[i+1][j+1].set(drag[i+1][j+1].add(faero2));
+    }
+  }
+  
+  for (int i = 0; i < NUMH; i++) { //set edges to be 1 in from edges (idk Guy showed me)
+    for (int j = 0; j < NUMW; j++) {
+    if (i == 0 && j == 0) { //top left
+      p[i][j].addDrag(drag[i+1][j+1]);
+    } else if (i == 0 && j == NUMW-1) { //top right
+      p[i][j].addDrag(drag[i+1][j-1]);  
+    } else if (i == 0) { //top edge
+      p[i][j].addDrag(drag[i+1][j]);
+    } else if (i == NUMH-1 && j == 0) { //bottom left
+      p[i][j].addDrag(drag[i-1][j+1]);
+    } else if (i == NUMH-1 && j == NUMW-1) { //bottom right
+      p[i][j].addDrag(drag[i-1][j-1]);
+    } else if (i ==NUMH-1) { //bottom edge
+      p[i][j].addDrag(drag[i-1][j]);
+    } else if (j == 0) { //left edge
+      p[i][j].addDrag(drag[i][j+1]);
+    } else if (j == NUMW-1) { //right edge
+      p[i][j].addDrag(drag[i][j-1]);
+    }
     }
   }
   
@@ -203,6 +219,7 @@ void update(float dt) {
         p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
         p[i][j].pos = p[i][j].pos.add(n.scalar(.15 + sphereR - d));
       
+        
       }
     }
   }
@@ -244,7 +261,7 @@ void draw() {
   }
   endShape();
 
- 
+  
   camera.Update( 1.0/frameRate );
     String runtimeReport = 
 
