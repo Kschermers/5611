@@ -4,9 +4,9 @@ float FLOOR = 500;
 float GRAV = 5;
 float MASS = .5;
 int RAD = 1;
-float RESTLEN = 7;
+float RESTLEN = 3;
 float KS = 70;
-float KV = 20;
+float KV = 25;
 float dragp = 1.225;
 float dragcd = 2;
 
@@ -25,7 +25,7 @@ void setup() {
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(600+(i*4.5),0+(j*4.5),-30+(i*4.5));
+      p[i][j].setPos(600+(i*2),50+(j*2),-30+(i*2));
       //p[i].print(i);
      p[i][j].vel = new KVector(-2,0,0);
       if(j==0){
@@ -141,29 +141,39 @@ void update(float dt) {
   //but drag needs to be calculated triangle by triangle so can't be done in same loop 
   //triangles are t1 and t2 
   //math from Guy's slides
-  //for(int i = 0; i < NUMH -1; i ++){
-  //  for(int j = 0; j < NUMW -1; j++){
-  //    KVector[] t1 = new KVector[3];
-  //    t1[0] = p[i][j].pos;
-  //    t1[1] = p[i][j+1].pos;
-  //    t1[2] = p[i+1][j].pos;
-  //    KVector v1 = p[i][j].vel.add(p[i][j+1].vel).add(p[i+1][j].vel).div(3);
-  //    KVector nstar1 =  t1[1].subtract(t1[0]).cross(t1[2].subtract(t1[0]));
-  //    KVector v2an1 = nstar1.scalar((v1.mag() * v1.dot(nstar1)) / (2*nstar1.mag()));
-  //    KVector faero1 = v2an1.scalar(-.5 * dragp * dragcd).div(3);
+  /*for(int i = 0; i < NUMH -1; i ++){
+    for(int j = 0; j < NUMW -1; j++){
+      KVector[] t1 = new KVector[3];
+      t1[0] = p[i][j].pos;
+      t1[1] = p[i][j+1].pos;
+      t1[2] = p[i+1][j].pos;
+      KVector v1 = p[i][j].vel.add(p[i][j+1].vel).add(p[i+1][j].vel).div(3);
+      KVector nstar1 =  t1[1].subtract(t1[0]).cross(t1[2].subtract(t1[0]));
+      KVector v2an1 = nstar1.scalar((v1.mag() * v1.dot(nstar1)) / (2*nstar1.mag()));
+      KVector faero1 = v2an1.scalar(-.5 * dragp * dragcd).div(3);
       
       
-  //    KVector[] t2 = new KVector[3];
-  //    t2[0] = p[i][j+1].pos;
-  //    t2[1] = p[i+1][j+1].pos;
-  //    t2[2] = p[i+1][j].pos;
-  //    KVector v2 = p[i][j+1].vel.add(p[i+1][j+1].vel).add(p[i+1][j].vel).div(3);
-  //    KVector nstar2 = t2[1].subtract(t2[0]).cross(t2[2].subtract(t2[0]));
-  //    KVector v2an2 = nstar2.scalar((v2.mag() * v2.dot(nstar2)) / (2*nstar2.mag()));
-  //    KVector faero2 = v2an2.scalar(-.5 * dragp * dragcd).div(3);
-      
-  //  }
-  //}
+      KVector[] t2 = new KVector[3];
+      t2[0] = p[i][j+1].pos;
+      t2[1] = p[i+1][j+1].pos;
+      t2[2] = p[i+1][j].pos;
+      KVector v2 = p[i][j+1].vel.add(p[i+1][j+1].vel).add(p[i+1][j].vel).div(3);
+      KVector nstar2 = t2[1].subtract(t2[0]).cross(t2[2].subtract(t2[0]));
+      KVector v2an2 = nstar2.scalar((v2.mag() * v2.dot(nstar2)) / (2*nstar2.mag()));
+      KVector faero2 = v2an2.scalar(-.5 * dragp * dragcd).div(3);
+        
+        for (int k = i; k <= i + 1; k++) {
+           for (int l = j; l <= j + 1; l++) {
+             if (k != i + 1 && l != j + 1) { //not [i+1][j+1]
+               p[k][l].addDrag(faero1);
+             }
+             if (k != i && l != j) { //not[i][j]
+               p[k][l].addDrag(faero2);
+             }
+           }
+        }
+    }
+  }*/
   
   //collision detection
   //doesn't work
@@ -191,7 +201,7 @@ float squared(float x){
 void draw() {
   background(255,255,255);
   for (int i = 0; i < 100; i++) {
-    update(.005);
+    update(.0025);
   }
   pushMatrix();
   fill(255,0,0);

@@ -46,11 +46,24 @@ class Particle {
   }
   
   void updateAcc(KVector topVert, KVector botVert, KVector leftHorz, KVector rightHorz) {
-     if (!locked){
-    acc.x = ((topVert.x + leftHorz.x) - (botVert.x + rightHorz.x))/mass;
-    acc.y = gravity/mass + ((topVert.y + leftHorz.y) - (botVert.y+ rightHorz.y))/mass;
-    acc.z = ((topVert.z + leftHorz.z) - (botVert.z + rightHorz.z))/mass;
-  }}
+    if (!locked){
+      acc.x = ((topVert.x + leftHorz.x) - (botVert.x + rightHorz.x))/mass;
+      acc.y = gravity/mass + ((topVert.y + leftHorz.y) - (botVert.y+ rightHorz.y))/mass;
+      acc.z = ((topVert.z + leftHorz.z) - (botVert.z + rightHorz.z))/mass;
+    }
+  }
+  
+  void addDrag(KVector f) {
+    acc.x += f.x;
+    acc.y += f.y;
+    acc.z += f.z;
+  }
+  
+  void subDrag(KVector f) {
+    acc.x -= f.x;
+    acc.y -= f.y;
+    acc.z -= f.z;
+  }
   
   void render() {
     pushMatrix();
