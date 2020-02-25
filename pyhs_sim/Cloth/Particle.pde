@@ -54,15 +54,11 @@ class Particle {
   }
   
   void addDrag(KVector f) {
-    acc.x += f.x;
-    acc.y += f.y;
-    acc.z += f.z;
-  }
-  
-  void subDrag(KVector f) {
-    acc.x -= f.x;
-    acc.y -= f.y;
-    acc.z -= f.z;
+    if (!locked) {
+      acc.x += f.x;
+      acc.y += f.y;
+      acc.z += f.z;
+    }
   }
   
   void render() {
