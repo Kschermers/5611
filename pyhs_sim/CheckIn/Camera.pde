@@ -107,6 +107,7 @@ class Camera
 void keyPressed()
 {
   camera.HandleKeyPressed();
+
 }
 
 void keyReleased()
