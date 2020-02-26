@@ -1,11 +1,11 @@
 int NUMW = 30;
 int NUMH = 60;
 float FLOOR = 500;
-float GRAV = 5;
+float GRAV = 2.5;
 float MASS = .5;
 int RAD = 1;
 float RESTLEN = 3;
-float KS = 70;
+float KS = 100;
 float KV = 25;
 float dragp = 1.225;
 float dragcd = .001;
@@ -27,7 +27,7 @@ void setup() {
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(300+(i*4), 100+(j*4), 0);
+      p[i][j].setPos(300+(i*2), 0+(j*2), 0);
       //p[i].print(i);
       //p[i][j].vel = new KVector(-2, 0, 0);
       if (i==0) {
@@ -45,107 +45,107 @@ void setup() {
 
 void update(float dt) {
 
-  //for (int i = 0; i < NUMH; i++) { //update all positions
-  //  for (int j = 0; j < NUMW; j++) {
-  //    p[i][j].update(dt);
-  //  }
-  //}
-  //int vertInd = 0;
-  //for (int i = 0; i < NUMH-1; i++) { //calc vert springs
-  //  for (int j = 0; j < NUMW; j++) {
-  //    sVert[vertInd].calc(p[i][j], p[i+1][j]);
-  //    vertInd++;
-  //  }
-  //}
-  //int horizInd = 0;
-  //for (int i = 0; i < NUMW-1; i++) { //calc horz springs
-  //  for (int j = 0; j < NUMH; j++) {
-  //    sHorz[horizInd].calc(p[j][i], p[j][i+1]);
-  //    horizInd++;
-  //  }
-  //}
-  //KVector edge = new KVector();
-  //for (int i = 0; i < NUMH; i++) {
-  //  for (int j = 0; j < NUMW; j ++) {
-  //    if (i == NUMH-1 && j == NUMW-1) { //last row, last column
-  //      p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
-  //        edge, //no bottom
-  //        sHorz[(NUMH*(j-1))+i].forces, 
-  //        edge); //no right
-  //    } else if (i == 0 && j == NUMW-1) { //first row, last column
-  //      p[i][j].updateAcc(edge, //no top
-  //        sVert[(NUMW*i)+j].forces, 
-  //        sHorz[(NUMH*(j-1))+i].forces, 
-  //        edge); //no right
-  //    } else if (j == NUMW-1) { //last column
-  //      p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
-  //        sVert[(NUMW*i)+j].forces, 
-  //        sHorz[(NUMH*(j-1))+i].forces, 
-  //        edge); //no right
-  //    } else if (i == NUMH-1 && j == 0) { //last row, first column
-  //      p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
-  //        edge, //no bottom
-  //        edge, //no left
-  //        sHorz[(NUMH*j)+i].forces);
-  //    } else if (i == NUMH-1) { //bottom row
-  //      p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
-  //        edge, //no bottom
-  //        sHorz[(NUMH*(j-1))+i].forces, 
-  //        sHorz[(NUMH*j)+i].forces);
-  //    } else if (j > 0 && i > 0) { //middle
+  for (int i = 0; i < NUMH; i++) { //update all positions
+    for (int j = 0; j < NUMW; j++) {
+      p[i][j].update(dt);
+    }
+  }
+  int vertInd = 0;
+  for (int i = 0; i < NUMH-1; i++) { //calc vert springs
+    for (int j = 0; j < NUMW; j++) {
+      sVert[vertInd].calc(p[i][j], p[i+1][j]);
+      vertInd++;
+    }
+  }
+  int horizInd = 0;
+  for (int i = 0; i < NUMW-1; i++) { //calc horz springs
+    for (int j = 0; j < NUMH; j++) {
+      sHorz[horizInd].calc(p[j][i], p[j][i+1]);
+      horizInd++;
+    }
+  }
+  KVector edge = new KVector();
+  for (int i = 0; i < NUMH; i++) {
+    for (int j = 0; j < NUMW; j ++) {
+      if (i == NUMH-1 && j == NUMW-1) { //last row, last column
+        p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
+          edge, //no bottom
+          sHorz[(NUMH*(j-1))+i].forces, 
+          edge); //no right
+      } else if (i == 0 && j == NUMW-1) { //first row, last column
+        p[i][j].updateAcc(edge, //no top
+          sVert[(NUMW*i)+j].forces, 
+          sHorz[(NUMH*(j-1))+i].forces, 
+          edge); //no right
+      } else if (j == NUMW-1) { //last column
+        p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
+          sVert[(NUMW*i)+j].forces, 
+          sHorz[(NUMH*(j-1))+i].forces, 
+          edge); //no right
+      } else if (i == NUMH-1 && j == 0) { //last row, first column
+        p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
+          edge, //no bottom
+          edge, //no left
+          sHorz[(NUMH*j)+i].forces);
+      } else if (i == NUMH-1) { //bottom row
+        p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
+          edge, //no bottom
+          sHorz[(NUMH*(j-1))+i].forces, 
+          sHorz[(NUMH*j)+i].forces);
+      } else if (j > 0 && i > 0) { //middle
 
-  //      p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
-  //        sVert[(NUMW*i)+j].forces, 
-  //        sHorz[(NUMH*(j-1))+i].forces, 
-  //        sHorz[(NUMH*j)+i].forces);
-  //    } else if (i == 0 && j == 0) { //first row, first column
-  //      p[i][j].updateAcc(edge, //no top
-  //        sVert[(NUMW*i)+j].forces, 
-  //        edge, //no left
-  //        sHorz[(NUMH*j)+i].forces);
-  //    } else if (j == 0) { //first column
-  //      p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
-  //        sVert[(NUMW*i)+j].forces, 
-  //        edge, //no left
-  //        sHorz[(NUMH*j)+i].forces);
-  //    } else if (i == 0) { //first row
-  //      p[i][j].updateAcc(edge, //no top
-  //        sVert[(NUMW*i)+j].forces, 
-  //        sHorz[(NUMH*(j-1))+i].forces, 
-  //        sHorz[(NUMH*j)+i].forces);
-  //    }
-  //  }
-  //}
+        p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
+          sVert[(NUMW*i)+j].forces, 
+          sHorz[(NUMH*(j-1))+i].forces, 
+          sHorz[(NUMH*j)+i].forces);
+      } else if (i == 0 && j == 0) { //first row, first column
+        p[i][j].updateAcc(edge, //no top
+          sVert[(NUMW*i)+j].forces, 
+          edge, //no left
+          sHorz[(NUMH*j)+i].forces);
+      } else if (j == 0) { //first column
+        p[i][j].updateAcc(sVert[(NUMW*(i-1))+j].forces, 
+          sVert[(NUMW*i)+j].forces, 
+          edge, //no left
+          sHorz[(NUMH*j)+i].forces);
+      } else if (i == 0) { //first row
+        p[i][j].updateAcc(edge, //no top
+          sVert[(NUMW*i)+j].forces, 
+          sHorz[(NUMH*(j-1))+i].forces, 
+          sHorz[(NUMH*j)+i].forces);
+      }
+    }
+  }
 
   //drag
-  //for (int i = 0; i < NUMH -1; i ++) {
-  //  for (int j = 0; j < NUMW -1; j++) {
-  //    Particle[] t = new Particle[4];
-  //    t[0] = p[i][j];
-  //    t[1] = p[i][j+1];
-  //    t[2] = p[i+1][j];
-  //    t[3] = p[i+1][j+1];
-  //    KVector v = t[0].vel.add(
-  //      t[1].vel.add(
-  //      t[2].vel.add(
-  //      t[3].vel))).scalar(.25);
+  for (int i = 0; i < NUMH -1; i ++) {
+    for (int j = 0; j < NUMW -1; j++) {
+      Particle[] t = new Particle[4];
+      t[0] = p[i][j];
+      t[1] = p[i][j+1];
+      t[2] = p[i+1][j];
+      t[3] = p[i+1][j+1];
+      KVector v = t[0].vel.add(
+        t[1].vel.add(
+        t[2].vel.add(
+        t[3].vel))).scalar(.25);
 
-  //    KVector n = t[1].pos.subtract(t[0].pos).cross(t[2].pos.subtract(t[0].pos));
-  //    float area = sqrt(n.dot(n));
-  //    float vMag = sqrt(v.dot(v));
-  //    KVector vDrag = n.scalar(-1 * dragp * dragcd * (vMag * (v.dot(n))/area));
+      KVector n = t[1].pos.subtract(t[0].pos).cross(t[2].pos.subtract(t[0].pos));
+      float area = sqrt(n.dot(n));
+      float vMag = sqrt(v.dot(v));
+      KVector vDrag = n.scalar(-1 * dragp * dragcd * (vMag * (v.dot(n))/area));
 
 
-  //    if (i == 0 && j == 0) {
-  //      vDrag.print();
-  //    }
+      if (i == 0 && j == 0) {
+        vDrag.print();
+      }
 
-  //    p[i][j].addDrag(vDrag);
-  //    p[i][j+1].addDrag(vDrag);     
-  //    p[i+1][j].addDrag(vDrag);   
-  //    p[i+1][j+1].addDrag(vDrag);
-  //  }
-  //}
+      p[i][j].addDrag(vDrag);
+      p[i][j+1].addDrag(vDrag);     
+      p[i+1][j].addDrag(vDrag);   
+      p[i+1][j+1].addDrag(vDrag);
+    }
+  }
 }
 
 float squared(float x) {
@@ -184,18 +184,18 @@ void drawCylinder(int sides, float r, float h)
 }
 void draw() {
   background(255, 255, 255);
-  //for (int i = 0; i < 50; i++) {
-  //  update(.005);
-  //}
+  for (int i = 0; i < 50; i++) {
+    update(.005);
+  }
   fill(0, 0, 0);
-  pushMatrix();
-  translate(300, FLOOR, 0);
-  pushMatrix();
-  rotateX(300);
-  drawCylinder(10,5,500);
-  // textureMode(IMAGE);
-  popMatrix();
-  popMatrix();
+  //pushMatrix();
+  //translate(300, FLOOR, 0);
+  //pushMatrix();
+  //rotateX(300);
+  //drawCylinder(10,5,500);
+  //// textureMode(IMAGE);
+  //popMatrix();
+  //popMatrix();
   beginShape(QUADS);
   
   // texture(img);
@@ -214,7 +214,7 @@ void draw() {
   endShape();
 
 
-  //camera.Update( 1.0/frameRate );
+  camera.Update( 1.0/frameRate );
   String runtimeReport = 
 
     " FPS: "+ str(round(frameRate)) +"\n";
