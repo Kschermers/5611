@@ -45,11 +45,18 @@ class Particle {
     //}
   }
   
+  void addWind() {
+    acc.x += random(2,8);
+    acc.y += random(-4,0);
+    acc.z += random(2,8);
+  }
+  
   void updateAcc(KVector topVert, KVector botVert, KVector leftHorz, KVector rightHorz) {
     if (!locked){
       acc.x = ((topVert.x + leftHorz.x) - (botVert.x + rightHorz.x))/mass;
       acc.y = gravity/mass + ((topVert.y + leftHorz.y) - (botVert.y+ rightHorz.y))/mass;
       acc.z = ((topVert.z + leftHorz.z) - (botVert.z + rightHorz.z))/mass;
+      addWind();
     }
   }
   

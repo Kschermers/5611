@@ -1,4 +1,4 @@
-int NUMW = 30;
+int NUMW = 40;
 int NUMH = 60;
 float FLOOR = 500;
 float GRAV = 2.5;
@@ -48,6 +48,9 @@ void update(float dt) {
   for (int i = 0; i < NUMH; i++) { //update all positions
     for (int j = 0; j < NUMW; j++) {
       p[i][j].update(dt);
+      if (i == 5 && j ==5) {
+        p[i][j].print(5);
+      }
     }
   }
   int vertInd = 0;
@@ -136,7 +139,7 @@ void update(float dt) {
       KVector vDrag = n.scalar(-1 * dragp * dragcd * (vMag * (v.dot(n))/area));
 
 
-      if (i == 0 && j == 0) {
+      if (i == 10 && j == 10) {
         vDrag.print();
       }
 
