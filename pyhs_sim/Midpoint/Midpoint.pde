@@ -1,25 +1,26 @@
-int NUMW = 40;
-int NUMH = 60;
+int NUMW = 30;
+int NUMH = 30;
 float FLOOR = 500;
-float GRAV = 2.5;
+float GRAV = 5;
 float MASS = .5;
 int RAD = 1;
 float RESTLEN = 3;
-float KS = 150;
-float KV = 30;
+float KS = 70;
+float KV = 25;
 float dragp = 1.225;
 float dragcd = .001;
 
 Particle[][] p = new Particle[NUMH][NUMW];
 Spring[] sVert = new Spring[NUMW*(NUMH-1)];
 Spring[] sHorz = new Spring[NUMH*(NUMW-1)];
-
+KVector spherePos = new KVector(500, 100, -15);
+float sphereR = 20;
 Camera camera;
 PImage img;
 //Create Window
 void setup() {
-  img = loadImage("flag.png");
-  img.resize(120, 80);
+  img = loadImage("cloth_texture_1.png");
+  img.resize(60, 60);
   noStroke();
   size(1000, 1000, P3D);
   camera = new Camera();
@@ -27,10 +28,10 @@ void setup() {
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(300+(i*2), 0+(j*2), 0);
+      p[i][j].setPos(600+(i*2), 50+(j*2), -30+(i*2));
       //p[i].print(i);
-      //p[i][j].vel = new KVector(-2, 0, 0);
-      if (i==0) {
+      p[i][j].vel = new KVector(-2, 0, 0);
+      if (j==0) {
         p[i][j].lock();
       }
     }
@@ -41,6 +42,9 @@ void setup() {
   for (int j = 0; j < sVert.length; j++) {
     sVert[j] = new Spring(RESTLEN, KS, KV);
   }
+
+  //p[0][0].lock();
+  //p[NUMH-1][0].lock();
 }
 
 void update(float dt) {
@@ -48,9 +52,6 @@ void update(float dt) {
   for (int i = 0; i < NUMH; i++) { //update all positions
     for (int j = 0; j < NUMW; j++) {
       p[i][j].update(dt);
-      if (i == 5 && j ==5) {
-        p[i][j].print(5);
-      }
     }
   }
   int vertInd = 0;
@@ -139,7 +140,7 @@ void update(float dt) {
       KVector vDrag = n.scalar(-1 * dragp * dragcd * (vMag * (v.dot(n))/area));
 
 
-      if (i == 10 && j == 10) {
+      if (i == 0 && j == 0) {
         vDrag.print();
       }
 
@@ -149,58 +150,43 @@ void update(float dt) {
       p[i+1][j+1].addDrag(vDrag);
     }
   }
+
+  //collision detection
+  for (int i = 0; i < NUMH; i++) {
+    for (int j = 0; j < NUMW; j++) {
+      float d = (sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
+      if (abs(d) < sphereR + .09) {
+        KVector n = spherePos.subtract(p[i][j].pos).scalar(-1);
+        n.normalize();
+        KVector bounce = n.scalar(p[i][j].vel.dot(n));
+        p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
+        p[i][j].pos = p[i][j].pos.add(n.scalar(.15 + sphereR - d));
+      }
+    }
+  }
 }
 
 float squared(float x) {
   return x * x;
 }
-//https://vormplus.be/full-articles/drawing-a-cylinder-with-processing
-void drawCylinder(int sides, float r, float h)
-{
-  float angle = 360 / sides;
-  float halfHeight = h / 2;
-  // draw top shape
-  beginShape();
-  for (int i = 0; i < sides; i++) {
-    float x = cos( radians( i * angle ) ) * r;
-    float y = sin( radians( i * angle ) ) * r;
-    vertex( x, y, -halfHeight );
-  }
-  endShape(CLOSE);
-  // draw bottom shape
-  beginShape();
-  for (int i = 0; i < sides; i++) {
-    float x = cos( radians( i * angle ) ) * r;
-    float y = sin( radians( i * angle ) ) * r;
-    vertex( x, y, halfHeight );
-  }
-  endShape(CLOSE);
-  // draw body
-  beginShape(TRIANGLE_STRIP);
-  for (int i = 0; i < sides + 1; i++) {
-    float x = cos( radians( i * angle ) ) * r;
-    float y = sin( radians( i * angle ) ) * r;
-    vertex( x, y, halfHeight);
-    vertex( x, y, -halfHeight);
-  }
-  endShape(CLOSE);
-}
 void draw() {
+  if (keyPressed && key == 'i') spherePos.y -= 5;
+  if (keyPressed && key == 'j') spherePos.x -= 5;
+  if (keyPressed && key == 'k') spherePos.y += 5;
+  if (keyPressed && key == 'l') spherePos.x += 5;
+  if (keyPressed && key == 'u') spherePos.z -= 5;
+  if (keyPressed && key == 'o') spherePos.z += 5;
   background(255, 255, 255);
   for (int i = 0; i < 50; i++) {
     update(.005);
   }
-  //fill(0, 0, 0);
-  //pushMatrix();
-  //translate(300, FLOOR, 0);
-  //pushMatrix();
-  //rotateX(300);
-  //drawCylinder(10,5,500);
-  //// textureMode(IMAGE);
-  //popMatrix();
-  //popMatrix();
+  pushMatrix();
+  fill(255, 0, 0);
+  translate(spherePos.x, spherePos.y, spherePos.z);
+  sphere(sphereR);
+  popMatrix();
+  textureMode(IMAGE);
   beginShape(QUADS);
-  
   texture(img);
   for (int i = 0; i < NUMH-1; i++) { //update all positions
     for (int j = 0; j < NUMW-1; j++) {
@@ -208,10 +194,6 @@ void draw() {
       vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z, i*2, j*2);
       vertex(p[i+1][j+1].pos.x, p[i+1][j+1].pos.y, p[i+1][j+1].pos.z, i*2, j*2);
       vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z, i*2, j*2);
-      //vertex(p[i][j].pos.x, p[i][j].pos.y, p[i][j].pos.z);
-      //vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z);
-      //vertex(p[i+1][j+1].pos.x, p[i+1][j+1].pos.y, p[i+1][j+1].pos.z);
-      //vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
     }
   }
   endShape();
