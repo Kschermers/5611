@@ -1,12 +1,12 @@
 int NUMW = 30;
 int NUMH = 30;
 float FLOOR = 500;
-float GRAV = 5;
+float GRAV = 8;
 float MASS = .5;
 int RAD = 1;
-float RESTLEN = 3;
+float RESTLEN = 2;
 float KS = 70;
-float KV = 25;
+float KV = 30;
 float dragp = 1.225;
 float dragcd = .001;
 
@@ -14,7 +14,7 @@ Particle[][] p = new Particle[NUMH][NUMW];
 Spring[] sVert = new Spring[NUMW*(NUMH-1)];
 Spring[] sHorz = new Spring[NUMH*(NUMW-1)];
 KVector spherePos = new KVector(500, 100, -15);
-float sphereR = 20;
+float sphereR = 15;
 Camera camera;
 PImage img;
 //Create Window
@@ -28,9 +28,9 @@ void setup() {
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
       p[i][j] = new Particle(MASS, RAD, GRAV);
-      p[i][j].setPos(600+(i*2), 50+(j*2), -30+(i*2));
+      p[i][j].setPos(600+(i*1.5), 50+(j*1.5), -30+(i*1.5));
       //p[i].print(i);
-      p[i][j].vel = new KVector(-2, 0, 0);
+      p[i][j].vel = new KVector(-1.5, 0, 0);
       if (j==0) {
         p[i][j].lock();
       }
@@ -140,9 +140,9 @@ void update(float dt) {
       KVector vDrag = n.scalar(-1 * dragp * dragcd * (vMag * (v.dot(n))/area));
 
 
-      if (i == 0 && j == 0) {
-        vDrag.print();
-      }
+      //if (i == 0 && j == 0) {
+      //  vDrag.print();
+      //}
 
       p[i][j].addDrag(vDrag);
       p[i][j+1].addDrag(vDrag);     

@@ -1,5 +1,5 @@
-int NUMW = 40;
-int NUMH = 60;
+int NUMW = 50;
+int NUMH = 50;
 float FLOOR = 500;
 float GRAV = 2.5;
 float MASS = .5;
@@ -15,11 +15,11 @@ Spring[] sVert = new Spring[NUMW*(NUMH-1)];
 Spring[] sHorz = new Spring[NUMH*(NUMW-1)];
 
 Camera camera;
-PImage img;
+
 //Create Window
 void setup() {
-  img = loadImage("flag.png");
-  img.resize(120, 80);
+
+ 
   noStroke();
   size(1000, 1000, P3D);
   camera = new Camera();
@@ -139,9 +139,9 @@ void update(float dt) {
       KVector vDrag = n.scalar(-1 * dragp * dragcd * (vMag * (v.dot(n))/area));
 
 
-      if (i == 10 && j == 10) {
-        vDrag.print();
-      }
+      //if (i == 10 && j == 10) {
+      //  vDrag.print();
+      //}
 
       p[i][j].addDrag(vDrag);
       p[i][j+1].addDrag(vDrag);     
@@ -163,25 +163,25 @@ void drawCylinder(int sides, float r, float h)
   beginShape();
   for (int i = 0; i < sides; i++) {
     float x = cos( radians( i * angle ) ) * r;
-    float y = sin( radians( i * angle ) ) * r;
-    vertex( x, y, -halfHeight );
+    float z = sin( radians( i * angle ) ) * r;
+    vertex( x, -halfHeight , z );
   }
   endShape(CLOSE);
   // draw bottom shape
   beginShape();
   for (int i = 0; i < sides; i++) {
     float x = cos( radians( i * angle ) ) * r;
-    float y = sin( radians( i * angle ) ) * r;
-    vertex( x, y, halfHeight );
+    float z = sin( radians( i * angle ) ) * r;
+    vertex( x, halfHeight, z );
   }
   endShape(CLOSE);
   // draw body
   beginShape(TRIANGLE_STRIP);
   for (int i = 0; i < sides + 1; i++) {
     float x = cos( radians( i * angle ) ) * r;
-    float y = sin( radians( i * angle ) ) * r;
-    vertex( x, y, halfHeight);
-    vertex( x, y, -halfHeight);
+    float z = sin( radians( i * angle ) ) * r;
+    vertex( x, halfHeight, z);
+    vertex( x, -halfHeight,z);
   }
   endShape(CLOSE);
 }
@@ -190,28 +190,29 @@ void draw() {
   for (int i = 0; i < 50; i++) {
     update(.005);
   }
-  //fill(0, 0, 0);
-  //pushMatrix();
-  //translate(300, FLOOR, 0);
+  fill(0, 0, 0);
+  pushMatrix();
+  translate(300, 150, 0);
   //pushMatrix();
   //rotateX(300);
-  //drawCylinder(10,5,500);
+  drawCylinder(10,3,310);
   //// textureMode(IMAGE);
-  //popMatrix();
+  popMatrix();
   //popMatrix();
   beginShape(QUADS);
   
-  texture(img);
+ 
   for (int i = 0; i < NUMH-1; i++) { //update all positions
     for (int j = 0; j < NUMW-1; j++) {
-      vertex(p[i][j].pos.x, p[i][j].pos.y, p[i][j].pos.z, i*2, j*2);
-      vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z, i*2, j*2);
-      vertex(p[i+1][j+1].pos.x, p[i+1][j+1].pos.y, p[i+1][j+1].pos.z, i*2, j*2);
-      vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z, i*2, j*2);
-      //vertex(p[i][j].pos.x, p[i][j].pos.y, p[i][j].pos.z);
-      //vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z);
-      //vertex(p[i+1][j+1].pos.x, p[i+1][j+1].pos.y, p[i+1][j+1].pos.z);
-      //vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
+      if (j %2== 0) {
+        fill(255,204,51);
+      } else{
+        fill(122,0,25);
+      }
+      vertex(p[i][j].pos.x, p[i][j].pos.y, p[i][j].pos.z);
+      vertex(p[i+1][j].pos.x, p[i+1][j].pos.y, p[i+1][j].pos.z);
+      vertex(p[i+1][j+1].pos.x, p[i+1][j+1].pos.y, p[i+1][j+1].pos.z);
+      vertex(p[i][j+1].pos.x, p[i][j+1].pos.y, p[i][j+1].pos.z);
     }
   }
   endShape();
