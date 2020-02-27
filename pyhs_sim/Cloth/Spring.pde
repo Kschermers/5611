@@ -53,9 +53,6 @@ class Spring {
       forces.set((springF + dampF) * dirX, 
                  (springF + dampF) * dirY, 
                  (springF + dampF) * dirZ);
-      //forces.x = (springF + dampF) * dirX;
-      //forces.y = (springF + dampF) * dirY;
-      //forces.z = (springF + dampF) * dirZ;
   
   }
   

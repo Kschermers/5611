@@ -43,8 +43,6 @@ void setup() {
     sVert[j] = new Spring(RESTLEN, KS, KV);
   }
 
-  //p[0][0].lock();
-  //p[NUMH-1][0].lock();
 }
 
 void update(float dt) {
@@ -138,12 +136,7 @@ void update(float dt) {
       float area = sqrt(n.dot(n));
       float vMag = sqrt(v.dot(v));
       KVector vDrag = n.scalar(-1 * dragp * dragcd * (vMag * (v.dot(n))/area));
-
-
-      //if (i == 0 && j == 0) {
-      //  vDrag.print();
-      //}
-
+      
       p[i][j].addDrag(vDrag);
       p[i][j+1].addDrag(vDrag);     
       p[i+1][j].addDrag(vDrag);   
@@ -154,13 +147,15 @@ void update(float dt) {
   //collision detection
   for (int i = 0; i < NUMH; i++) {
     for (int j = 0; j < NUMW; j++) {
-      float d = (sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
-      if (abs(d) < sphereR + .09) {
-        KVector n = spherePos.subtract(p[i][j].pos).scalar(-1);
-        n.normalize();
-        KVector bounce = n.scalar(p[i][j].vel.dot(n));
-        p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
-        p[i][j].pos = p[i][j].pos.add(n.scalar(.15 + sphereR - d));
+      if (!p[i][j].locked) {
+        float d = (sqrt(squared(spherePos.x - p[i][j].pos.x) + squared(spherePos.y - p[i][j].pos.y) + squared(spherePos.z - p[i][j].pos.z)));
+        if (abs(d) < sphereR + .25) {
+          KVector n = spherePos.subtract(p[i][j].pos).scalar(-1);
+          n.normalize();
+          KVector bounce = n.scalar(p[i][j].vel.dot(n));
+          p[i][j].vel = p[i][j].vel.subtract(bounce.scalar(1.5));
+          p[i][j].pos = p[i][j].pos.add(n.scalar(.25 + sphereR - d));
+        }
       }
     }
   }
@@ -170,12 +165,12 @@ float squared(float x) {
   return x * x;
 }
 void draw() {
-  if (keyPressed && key == 'i') spherePos.y -= 5;
-  if (keyPressed && key == 'j') spherePos.x -= 5;
-  if (keyPressed && key == 'k') spherePos.y += 5;
-  if (keyPressed && key == 'l') spherePos.x += 5;
-  if (keyPressed && key == 'u') spherePos.z -= 5;
-  if (keyPressed && key == 'o') spherePos.z += 5;
+  if (keyPressed && key == 'i') spherePos.y -= 1.75;
+  if (keyPressed && key == 'j') spherePos.x -= 1.75;
+  if (keyPressed && key == 'k') spherePos.y += 1.75;
+  if (keyPressed && key == 'l') spherePos.x += 1.75;
+  if (keyPressed && key == 'u') spherePos.z -= 1.75;
+  if (keyPressed && key == 'o') spherePos.z += 1.75;
   background(255, 255, 255);
   for (int i = 0; i < 50; i++) {
     update(.005);
