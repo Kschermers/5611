@@ -14,8 +14,8 @@ class Node {
     links = new ArrayList<Link>();
   }
   
-  void connect(float a, float b) {
-    links.add(new Link(xPos, yPos, a, b));
+  void connect(int eid, float a, float b) {
+    links.add(new Link(id, xPos, yPos, eid, a, b));
   }
   
   void render() {
@@ -26,6 +26,5 @@ class Node {
     println("id: " + id +
             " | xPos: " + xPos +
             " | yPos: " + yPos);
-    //links.forEach(l -> l.
   }
 }

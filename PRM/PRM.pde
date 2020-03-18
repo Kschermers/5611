@@ -28,13 +28,7 @@ void sampleObstacles() {
       
       angle += radians(360/SAMPLE_SIZE);
     }
-      
   }
-  graph.listNodes();
-}
-
-void buildLinks() {
-  
 }
 
 void setup() {
@@ -50,6 +44,7 @@ void setup() {
   sampleObstacles();
   graph.setGoal(NODE_ID, GOAL_X_POS, GOAL_Y_POS);
   graph.link();
+  graph.listNodes();
 }
 
 void draw() {

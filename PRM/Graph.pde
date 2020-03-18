@@ -24,10 +24,12 @@ class Graph {
   }
   
   void link() {
-     for (int i = 0; i < graph.size()-1; i++) {
+     for (int i = 0; i < graph.size(); i++) {
        for (int j = i+1; j < graph.size(); j++) {
          Node base = graph.get(i);
+         base.printNode();
          Node end = graph.get(j);
+         end.printNode();
          
          for (Obstacle o: obstacles) {
            KVector d = new KVector(end.xPos - base.xPos, end.yPos - base.yPos);
@@ -40,7 +42,7 @@ class Graph {
            float disc = b*b - (4*a*c);
            
            if (disc < 0) {
-             base.connect(end.xPos, end.yPos);
+             base.connect(end.id, end.xPos, end.yPos);
              println("added link!");
              linkCount++;
            } else {
@@ -49,11 +51,11 @@ class Graph {
              float t2 = ((b*-1) + disc)/(2*a);
              
              if (t1 >= 0 && t1 <= 1) {
-               base.connect(end.xPos, end.yPos);
+               base.connect(end.id, end.xPos, end.yPos);
                println("added link!");
                linkCount++;
-             } if (t2 >= 0 && t2 <= 1) {
-               base.connect(end.xPos, end.yPos);
+             } else if (t2 >= 0 && t2 <= 1) {
+               base.connect(end.id, end.xPos, end.yPos);
                println("added link!");
                linkCount++;
              }
@@ -63,6 +65,15 @@ class Graph {
        }
      }
      println("links created: " + linkCount);
+  }
+  
+  ArrayList<Integer> findPath() {
+   ArrayList<Integer> pathIDs = new ArrayList<Integer>();
+   
+   pathIDs.add(graph.get(0).id);
+   
+   
+   return pathIDs;
   }
   
   void render() {
@@ -79,6 +90,9 @@ class Graph {
     for (int i = 0; i < graph.size(); i++) {
       Node n = graph.get(i);
       n.printNode();
+      for(int j = 0; j < n.links.size(); j++) {
+        n.links.get(j).print();
+      }
     }
   }
 }
