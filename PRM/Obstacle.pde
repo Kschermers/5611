@@ -12,7 +12,11 @@ class Obstacle {
   }
   
   void render() {
-    fill(0);
+    pushMatrix();
+    noStroke();
+    fill(0,200,0);
+    //noFill();
     circle(xPos,yPos,radius*2);
+    popMatrix();
   }
 }

@@ -1,9 +1,13 @@
+import java.util.*;
+
 class Node {
   
   int id;
   float xPos;
   float yPos;
   ArrayList<Link> links;
+  boolean isGoal = false;
+  int pathParent = -1;
   
   
   public Node(int i, float x, float y) {
@@ -18,13 +22,25 @@ class Node {
     links.add(new Link(id, xPos, yPos, eid, a, b));
   }
   
+  void setGoal() {
+    isGoal = true;
+  }
+  
+  void setParent(int p) {
+    pathParent = p;  
+  }
+  
   void render() {
+    pushMatrix();
     circle(xPos,yPos,2);
+    popMatrix();
   }
   
   void printNode() {
     println("id: " + id +
             " | xPos: " + xPos +
-            " | yPos: " + yPos);
+            " | yPos: " + yPos +
+            " | parentID: " + pathParent +
+            " | isGoal: " + isGoal);
   }
 }

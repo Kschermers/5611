@@ -1,3 +1,5 @@
+import java.util.*;
+
 class Graph {
   
   ArrayList<Node> graph;
@@ -10,12 +12,16 @@ class Graph {
   
   void setStart(int id, float x, float y) {
     graph.add(new Node(id, x, y));
+    START_ID = NODE_ID;
     NODE_ID++;
   }
   
   void setGoal(int id, float x, float y) {
-    graph.add(new Node(id, x, y));
-    NODE_ID++;
+    Node n = new Node(id, x, y);
+    n.setGoal();
+    graph.add(n);
+    GOAL_ID = NODE_ID;
+    //NODE_ID++;
   }
   
   void addNode(int i, float x, float y) {
@@ -27,53 +33,81 @@ class Graph {
      for (int i = 0; i < graph.size(); i++) {
        for (int j = i+1; j < graph.size(); j++) {
          Node base = graph.get(i);
-         base.printNode();
-         Node end = graph.get(j);
-         end.printNode();
-         
-         for (Obstacle o: obstacles) {
-           KVector d = new KVector(end.xPos - base.xPos, end.yPos - base.yPos);
-           KVector f = new KVector(end.xPos - o.xPos, end.yPos - o.yPos);
-           
-           float a = d.dot(d);
-           float b = 2*f.dot(d);
-           float c = f.dot(f) - (o.radius*o.radius);
-           
-           float disc = b*b - (4*a*c);
-           
-           if (disc < 0) {
-             base.connect(end.id, end.xPos, end.yPos);
-             println("added link!");
-             linkCount++;
-           } else {
-             disc = sqrt(disc);
-             float t1 = ((b*-1) - disc)/(2*a);
-             float t2 = ((b*-1) + disc)/(2*a);
-             
-             if (t1 >= 0 && t1 <= 1) {
-               base.connect(end.id, end.xPos, end.yPos);
-               println("added link!");
-               linkCount++;
-             } else if (t2 >= 0 && t2 <= 1) {
-               base.connect(end.id, end.xPos, end.yPos);
-               println("added link!");
-               linkCount++;
-             }
-           }
+         Node end = graph.get(j);       
+        
+         if (!checkIntersect(base,end)) {
+           base.connect(end.id, end.xPos, end.yPos);
          }
          graph.set(i, base);
        }
      }
-     println("links created: " + linkCount);
   }
   
-  ArrayList<Integer> findPath() {
-   ArrayList<Integer> pathIDs = new ArrayList<Integer>();
-   
-   pathIDs.add(graph.get(0).id);
-   
-   
-   return pathIDs;
+  boolean checkIntersect(Node base, Node end) {
+    
+    for (Obstacle o: obstacles) {
+     KVector d = new KVector(end.xPos - base.xPos, end.yPos - base.yPos);
+     KVector f = new KVector(base.xPos - o.xPos, base.yPos - o.yPos);
+     
+     float a = d.dot(d);
+     float b = 2*f.dot(d);
+     float c = f.dot(f) - (o.radius*o.radius);
+     
+     float disc = b*b - (4*a*c);
+     
+     if (disc >= 0) {
+       
+       disc = sqrt(disc);
+       float t1 = ((b*-1) - disc)/(2*a);
+       float t2 = ((b*-1) + disc)/(2*a);
+       
+       if (t1 >= 0 && t1 <= 1) {
+         return true;
+       } else if (t2 >= 0 && t2 <= 1) {
+         return true;
+       } 
+     }
+   }
+   return false;
+  }
+  
+  void findPath() {
+    
+    boolean[] visited = new boolean[graph.size()];
+    PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
+    
+    Node n = graph.get(0);
+    
+    visited[n.id] = true;
+    pq.add(n.id);
+    
+    while(pq.size() != 0) {
+      int id = pq.poll();
+      n = graph.get(id);
+       
+      if (n.isGoal) {
+         return;
+      }
+      for (Link l : n.links) {
+        if (!visited[l.endID]) {
+          visited[l.endID] = true;
+          Node m = graph.get(l.endID);
+          m.setParent(n.id); 
+          graph.set(m.id,m);
+          pq.add(m.id);
+        }
+      }
+    }
+  }
+  
+  void buildPath() {
+    Path.add(GOAL_ID);
+    int parent = graph.get(GOAL_ID).pathParent;
+    while (parent != START_ID) {
+      Path.add(parent);
+      parent = graph.get(parent).pathParent;
+    }
+    Path.add(parent);
   }
   
   void render() {
