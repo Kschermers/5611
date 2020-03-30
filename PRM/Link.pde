@@ -29,7 +29,8 @@ class Link {
       strokeWeight(1);
     } else {
       stroke(200,200,200);
-      strokeWeight(.5);
+      strokeWeight(.25);
+      //noStroke();
     }
     
     line(basePos.x,basePos.y,endPos.x,endPos.y);
@@ -37,7 +38,7 @@ class Link {
   }
   
   void print() {
-    println("baseX: " + basePos.x +
+    println("    baseX: " + basePos.x +
             " | baseY: " + basePos.y +
             " | endX: " + endPos.x +
             " | endY: " + endPos.y);

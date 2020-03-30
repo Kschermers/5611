@@ -30,7 +30,7 @@ class KVector {
   void set(KVector that) {
     x = that.x;
     y = that.y;
-    z = that.z; 
+    z = that.z;
   }
   
   void set(float a, float b, float c) {

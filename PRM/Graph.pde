@@ -10,18 +10,14 @@ class Graph {
     linkCount = 0;
   }
   
-  void setStart(int id, float x, float y) {
+  void addAgentStart(int id, float x, float y) {
     graph.add(new Node(id, x, y));
-    START_ID = NODE_ID;
     NODE_ID++;
   }
   
-  void setGoal(int id, float x, float y) {
-    Node n = new Node(id, x, y);
-    n.setGoal();
-    graph.add(n);
-    GOAL_ID = NODE_ID;
-    //NODE_ID++;
+  void addAgentGoal(int id, float x, float y) {
+    graph.add(new Node(id, x, y));
+    NODE_ID++;
   }
   
   void addNode(int i, float x, float y) {
@@ -51,7 +47,7 @@ class Graph {
      
      float a = d.dot(d);
      float b = 2*f.dot(d);
-     float c = f.dot(f) - (o.radius*o.radius);
+     float c = f.dot(f) - pow(o.radius+AGENT_RAD,2);
      
      float disc = b*b - (4*a*c);
      
@@ -65,19 +61,30 @@ class Graph {
          return true;
        } else if (t2 >= 0 && t2 <= 1) {
          return true;
-       } 
-     }
-   }
+       }      }
+    }
    return false;
   }
   
-  void findPath() {
+  void findPath(Agent a) {
     
     boolean[] visited = new boolean[graph.size()];
-    PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
+    PriorityQueue<Integer> pq = new PriorityQueue<Integer>(
+      new Comparator<Integer>() {
+        
+        public int compare(Integer i, Integer j) {
+          if (graph.get(i).pathCost > graph.get(j).pathCost) {
+            return 1;
+          } else if (graph.get(i).pathCost < graph.get(j).pathCost) {
+            return -1;
+          } else {
+            return 0;
+          }
+        }
+      });    
     
-    Node n = graph.get(0);
-    
+    Node n = graph.get(a.startID);
+  
     visited[n.id] = true;
     pq.add(n.id);
     
@@ -85,29 +92,44 @@ class Graph {
       int id = pq.poll();
       n = graph.get(id);
        
-      if (n.isGoal) {
+      if (n.id == a.goalID) {
          return;
       }
       for (Link l : n.links) {
-        if (!visited[l.endID]) {
-          visited[l.endID] = true;
-          Node m = graph.get(l.endID);
+        
+        Node m = graph.get(l.endID);
+        m.pathCost = n.pathCost + l.weight;
+        graph.set(m.id,m);
+        
+        if (!visited[l.endID] && !pq.contains(m)) {
+          
+          visited[m.id] = true;
           m.setParent(n.id); 
           graph.set(m.id,m);
           pq.add(m.id);
+          
+        } else if (pq.contains(m.id) && m.pathCost < n.pathCost) {         
+          
+          m.setParent(n.id); 
+          graph.set(m.id,m);
+          pq.remove(m.id);
+          pq.add(m.id);}      
         }
-      }
     }
   }
   
-  void buildPath() {
-    Path.add(GOAL_ID);
-    int parent = graph.get(GOAL_ID).pathParent;
-    while (parent != START_ID) {
-      Path.add(parent);
+  ArrayList<Integer> buildPath(Agent a) {
+    ArrayList<Integer> path = new ArrayList<Integer>();
+    path.add(a.goalID);
+    
+    int parent = graph.get(a.goalID).pathParent;
+    while (parent != a.startID && parent > 0) {
+      path.add(parent);
       parent = graph.get(parent).pathParent;
     }
-    Path.add(parent);
+    path.add(parent);
+    Collections.reverse(path);
+    return path;
   }
   
   void render() {
@@ -125,7 +147,7 @@ class Graph {
       Node n = graph.get(i);
       n.printNode();
       for(int j = 0; j < n.links.size(); j++) {
-        n.links.get(j).print();
+        //n.links.get(j).print();
       }
     }
   }
