@@ -29,8 +29,8 @@ class Link {
       strokeWeight(1);
     } else {
       stroke(200,200,200);
-      strokeWeight(.25);
-      //noStroke();
+      //strokeWeight(.25);
+      noStroke();
     }
     
     line(basePos.x,basePos.y,endPos.x,endPos.y);

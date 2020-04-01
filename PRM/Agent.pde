@@ -2,6 +2,8 @@ class Agent {
   
   float xPos;
   float yPos;
+  float xVel;
+  float yVel;
   int radius;
   int startID;
   int goalID;
@@ -19,7 +21,28 @@ class Agent {
     pc = 0;
   }
   
-  void render() {
+  void setGoalID(int g) {
+   goalID = g; 
+  }
+  
+  void updatePos() {
+    if (!atGoal) {
+      xPos += xVel;
+      yPos += yVel;
+    }
+  }
+   
+  void setPos(float x, float y) {
+    xPos = x;
+    yPos = y;
+  }
+  
+  void updateVel(float x, float y) {
+    xVel = x;
+    yVel = y;
+  }
+  
+    void render() {
     pushMatrix();
     noStroke();
     fill(200,0,0);
@@ -27,25 +50,18 @@ class Agent {
     popMatrix();
   }
   
-  void move(float x, float y) {
-    if (!atGoal) {
-      xPos += x;
-      yPos += y;
-    }
-  }
-  
-  void setGoalID(int g) {
-   goalID = g; 
-  }
-  
-  void setPos(float x, float y) {
-    xPos = x;
-    yPos = y;
-  }
-  
   boolean atMS(float x, float y) {
-    if (x - xPos < 1 && y - yPos < 1) return true;
-    return false;
+    
+    if (x - xPos < 1 && x - xPos > -1) {
+      if (y - yPos < 1 && y - yPos > -1) {
+        setPos(x,y);
+        return true;
+       } else {
+         return false;
+       } 
+    } else {
+       return false;
+    }
   }
   
   void print() {
