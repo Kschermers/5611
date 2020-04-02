@@ -10,6 +10,7 @@ class Agent {
   boolean atGoal = false;
   ArrayList<Integer> path;
   int pc;
+  boolean giveBounce;
   
   public Agent(float x, float y, int rad, int s) {
     
@@ -19,6 +20,7 @@ class Agent {
     startID = s;
     path = new ArrayList<Integer>();
     pc = 0;
+    giveBounce = false;
   }
   
   void setGoalID(int g) {

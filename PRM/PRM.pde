@@ -1,5 +1,5 @@
-int AGENT_RAD = 10;
-int BOIDS_RAD = 30;
+int AGENT_RAD = 15;
+int BOIDS_RAD = 40;
 int AGENT_COUNT = 10;
 int OBS_COUNT = 40;
 
@@ -20,10 +20,15 @@ Boids boids;
 Obstacle[] obstacles = new Obstacle[OBS_COUNT];
 
 void randomizeObstacles() {
+  
+  int OBS_X_BOT = 150;
+  int OBS_X_TOP = 200;
  
   for(int i = 0; i < OBS_COUNT; i++) {
-    Obstacle o = new Obstacle(random(150,850),random(50,950),floor(random(10,40)));
+    Obstacle o = new Obstacle(random(OBS_X_BOT,OBS_X_TOP),random(100,900),floor(random(10,40)));
     obstacles[i] = o;
+    OBS_X_BOT += 600/OBS_COUNT;
+    OBS_X_TOP += 600/OBS_COUNT;
   }
 }
   
@@ -50,6 +55,7 @@ void renderObstacles() {
 int moveAgent(Agent a) {
   
   Node base = graph.graph.get(a.path.get(a.pc));
+  //a.path.remove(a.pc);
   Node end = graph.graph.get(a.path.get(a.pc+1));
   
   for (Link l : base.links) {
@@ -69,6 +75,7 @@ int moveAgent(Agent a) {
   if (end.id != a.goalID) {
     if (a.atMS(end.xPos, end.yPos)) {
       a.pc++;
+      a.giveBounce = false;
       println("Agent: " + a.startID + " at MS: " + end.id + " | x: " + end.xPos + " | y: " + end.yPos);
       return 0;
     }
@@ -144,7 +151,6 @@ void draw() {
   for (int i = 0; i < AGENT_COUNT; i++) {
     agents[i].render();
     if (!agents[i].atGoal) {
-      moveAgent(agents[i]);
       moveAgent(agents[i]);
       //agents[i].print();
     } else {

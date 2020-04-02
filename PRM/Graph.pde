@@ -135,7 +135,7 @@ class Graph {
   void render() {
     for (int i = 0; i < graph.size(); i++) {
       Node n = graph.get(i);
-      n.render();
+      //n.render();
       for(int j = 0; j < n.links.size(); j++) {
         n.links.get(j).render();
       }
